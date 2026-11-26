@@ -21,12 +21,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     ...authConfig.callbacks,
-    signIn({ user, email }) {
+    async signIn({ user, email }) {
       if (isAdminEmail(user.email)) return true;
       // Not on the allow-list. When a link is requested, send nothing and show the same "check your email" page,
       // so the form doesn't reveal which addresses are admins. A link that was sent before the address was
       // removed is refused.
-      return email?.verificationRequest ? CHECK_YOUR_EMAIL : false;
+      if (!email?.verificationRequest) return false;
+      // A real request waits for Resend and the token insert; wait a similar, random time so response timing
+      // doesn't give the allow-list away either.
+      await new Promise((resolve) => setTimeout(resolve, 400 + Math.random() * 600));
+      return CHECK_YOUR_EMAIL;
     },
   },
 });

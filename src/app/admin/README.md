@@ -8,8 +8,10 @@ anyone else to sign-in (`/api/auth/signin`), and the layout, every page and ever
 
 | Path | What it is |
 |---|---|
+| `page.tsx` | `/admin` itself: checks the session and redirects to `/admin/leads`. |
+| `error.tsx` | Shown in place of a page that fails to render (e.g. the database is down), with a Try again button. The admin header stays. |
 | `layout.tsx` | Checks the session and renders the admin chrome: the "injily admin" wordmark, the nav (Leads, Cases), the signed-in email and Sign out. Sets `dynamic = 'force-dynamic'` and `robots: { index: false }` for everything below it. |
-| `actions.ts` | The Server Actions: `changeStatus`, `changeOwner`, `addNoteAction` and `signOutAction`. Each edit calls `requireAdmin()`, parses the form with a schema from `@/lib/validation/admin`, calls a service, and returns an `ActionState` ("Saved" or one error line) for `ActionForm`. |
+| `actions.ts` | The Server Actions: `changeStatus`, `changeOwner`, `addNoteAction` and `signOutAction`. Each edit calls `requireAdmin()`, parses the form with a schema from `@/lib/validation/admin`, calls a service, and returns an `ActionState` ("Saved" or one error line) for `ActionForm`. Service calls go through `attempt()`, so a database failure becomes the error line "Something went wrong saving this." instead of crashing the page. `signOutAction` checks the session too. |
 | `leads/page.tsx` | Leads, newest first: name, organization, country, status, owner, created. `?status=new` (etc.) filters; an unknown value shows all. |
 | `leads/[id]/page.tsx` | One Lead: the request (interest, source page, message), the person, the organization, the status picker, owner, a note box and the timeline. |
 | `cases/page.tsx` | Service Cases, the same list as Leads. |
