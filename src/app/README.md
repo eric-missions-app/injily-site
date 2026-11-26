@@ -10,7 +10,7 @@ is an API endpoint, and there's no router config anywhere.
 | `layout.tsx` | The root HTML shell for every page. It loads Manrope through `next/font/google` (self-hosted, exposed as `--font-manrope`), links the Material Symbols icon font, and sets site-wide `metadata` (title template `%s \| injily`, description). |
 | `globals.css` | Tailwind's directives plus the **color tokens**: CSS variables under `:root` (light) and `.dark` (dark). This is the only place a color value is written. |
 | `page.tsx` | The homepage (`/`). For now it's just `Header`, an empty `<main className="pt-20">` and `Footer`. Sections arrive with J-6 and J-7. |
-| `privacy/page.tsx` | The privacy policy (`/privacy`), linked from the Footer and from the forms' consent checkbox. Static, plain-language copy: what we collect, why, who can see it, how long we keep it, the visitor's rights and how to ask (via `/contact`). When the copy changes, update its "Last updated" date; keep it in step with the form fields and the services it names. No CTA card. |
+| `privacy/page.tsx` | The privacy policy (`/privacy`). Static. Read [privacy/README.md](privacy/README.md) before editing it. |
 
 ## What's coming, by ticket
 
