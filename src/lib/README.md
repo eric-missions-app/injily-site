@@ -21,17 +21,17 @@ editing this file and nothing else.
 | `FOOTER_COLUMNS` | the Footer's three columns: Product, Who it's for, Company (FAQ, Contact, Privacy) |
 | `NavLink`, `NavGroup` | the types for the above |
 
-## Coming next
+### `validation/`: Zod schemas
 
-### `validation/`: Zod schemas (J-2 onward)
-
-There's one schema per input, and **the same schema runs in the browser and on the server**:
+There's one schema per input, and **the same schema runs in the browser and on the server**. See
+[validation/README.md](validation/README.md).
 
 | File | Used by |
 |---|---|
+| `validation/shared.ts` | the fields `lead.ts` and `case.ts` share |
 | `validation/lead.ts` | `LeadForm` and `POST /api/intake/lead` |
 | `validation/case.ts` | `CaseForm` and `POST /api/intake/case` |
-| `validation/admin.ts` | every admin Server Action (status, owner, note, edits) |
+| `validation/admin.ts` | every admin Server Action (status, owner, note, edits); coming with J-4 |
 
 Export the schema and its inferred type together:
 

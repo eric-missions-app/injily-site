@@ -9,7 +9,7 @@ connection and secrets out of the browser.
 | Folder / file | What it holds | Ticket |
 |---|---|---|
 | `db/` | the Drizzle schema and the one database connection | J-1 (here now), see [db/README.md](db/README.md) |
-| `services/` | business logic: `people.ts`, `organizations.ts`, `leads.ts`, `cases.ts`, `rateLimit.ts`, then `opportunities.ts` | J-2, J-5 |
+| `services/` | business logic: `people.ts`, `organizations.ts`, `leads.ts`, `cases.ts`, `rateLimit.ts` (here now), then `opportunities.ts` | J-2, J-5, see [services/README.md](services/README.md) |
 | `email/` | the Resend client and the email templates (team notification, visitor confirmation) | J-3 |
 | `auth.ts` | Auth.js config: email magic links, limited to `ADMIN_EMAILS` | J-4 |
 

@@ -10,6 +10,7 @@ is an API endpoint, and there's no router config anywhere.
 | `layout.tsx` | The root HTML shell for every page. It loads Manrope through `next/font/google` (self-hosted, exposed as `--font-manrope`), links the Material Symbols icon font, and sets site-wide `metadata` (title template `%s \| injily`, description). |
 | `globals.css` | Tailwind's directives plus the **color tokens**: CSS variables under `:root` (light) and `.dark` (dark). This is the only place a color value is written. |
 | `page.tsx` | The homepage (`/`). For now it's just `Header`, an empty `<main className="pt-20">` and `Footer`. Sections arrive with J-6 and J-7. |
+| `api/intake/lead/route.ts`, `api/intake/case/route.ts` | The only public endpoints: `POST` a lead or a service case. See [api/README.md](api/README.md) and [api/intake/README.md](api/intake/README.md). |
 
 ## What's coming, by ticket
 
