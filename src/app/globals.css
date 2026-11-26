@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Color tokens as space-separated RGB channels, so Tailwind can apply opacity
+ * (`bg-primary/10`). Mapped into the theme in tailwind.config.js.
+ */
+:root {
+  --color-primary: 79 70 229;
+  --color-primary-hover: 67 56 202;
+  --color-on-primary: 255 255 255;
+  --color-primary-darker: 49 46 129;
+  --color-background: 255 255 255;
+  --color-background-light: 246 247 251;
+  --color-surface: 255 255 255;
+  --color-text: 17 24 39;
+  --color-muted: 92 102 122;
+  --color-border: 226 229 238;
+  --color-accent: 217 119 6;
+  --color-danger: 220 38 38;
+  --color-success: 22 163 74;
+}
+
+.dark {
+  /* Lighter in dark mode, with dark text on it: 6.5:1 on-primary, 6.5:1 as text on the background. */
+  --color-primary: 129 140 248;
+  --color-primary-hover: 165 180 252;
+  --color-on-primary: 11 13 23;
+  --color-primary-darker: 30 27 75;
+  --color-background: 11 13 23;
+  --color-background-light: 18 21 35;
+  --color-surface: 24 28 45;
+  --color-text: 241 243 249;
+  --color-muted: 156 163 184;
+  --color-border: 45 51 74;
+  --color-accent: 251 191 36;
+  --color-danger: 248 113 113;
+  --color-success: 74 222 128;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-background text-text antialiased;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  line-height: 1;
+}
