@@ -1,113 +1,199 @@
-# Architecture Overview
+# Architecture
 
-A reusable blueprint for marketing/SaaS websites built the way this one is. Use this as a checklist when starting a new site from scratch.
+injily-site is two things in one Next.js app on Vercel:
+
+1. **The marketing site** (injily.com): static pages that explain injily to churches, evangelists and mission teams.
+2. **A basic CRM**: the site's forms create records (Person, Organization, Lead, Service Case) in a Postgres
+   database, and a small signed-in admin area at `/admin` is where the team follows them up.
+
+The marketing pages stay static and fast. Everything dynamic (the database, the intake API, the admin area) is
+server-side and kept apart from them.
 
 ## Stack
 
 | Layer | Choice |
 |---|---|
 | Framework | Next.js 14 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS (JIT, class-based dark mode) |
+| Language | TypeScript (strict) |
+| Styling | Tailwind CSS (class-based dark mode) |
 | Animation | Framer Motion |
-| Font | Google Font via `next/font` (Manrope here) + Material Symbols for icons |
-| Hosting | Vercel (zero-config for Next.js) |
-| Images | `next/image`, remote images allow-listed in `next.config.js` |
+| Font | Manrope via `next/font/google`; Material Symbols for icons |
+| Database | Postgres (Neon, through the Vercel integration) |
+| Data access | Drizzle ORM; migrations with `drizzle-kit`, committed under `drizzle/` |
+| Validation | Zod, one schema per input, shared by the form and the server |
+| Admin sign-in | Auth.js (NextAuth v5) email magic links, limited to an allow-list |
+| Email | Resend (team notifications and visitor confirmations) |
+| Hosting | Vercel |
+| Images | `next/image`; remote hosts allow-listed in `next.config.js` |
 
-This is a **static/SSG marketing site** — no database, no auth, no API routes. All "backend" needs (forms, analytics) are third-party embeds or external links (e.g. a Calendly link for demos).
-
-## Directory Layout
+## Directory layout
 
 ```
 src/
   app/
-    layout.tsx          # root HTML shell, fonts, global <head> metadata (SEO/OG/Twitter)
-    page.tsx             # homepage — composes section components
-    globals.css          # Tailwind directives + CSS variable color tokens
-    pricing/page.tsx
-    resources/page.tsx
-    product/<slug>/page.tsx       # one route per product feature
-    use-cases/<slug>/page.tsx     # one route per audience segment
-  components/
-    Header.tsx, Footer.tsx        # global chrome, present on every page
-    DropdownMenu.tsx              # shared nav primitive
-    Hero.tsx, Features.tsx, HowItWorks.tsx, Testimonials.tsx, CTA.tsx, LogoCloud.tsx   # homepage sections
-    ProductHero.tsx, ProductFeatures.tsx, ProductTabs.tsx, ProductCTA.tsx              # reusable sections for product/use-case pages
-public/                  # static assets (favicon, logo)
+    layout.tsx                 # root shell, fonts, site-wide metadata (SEO/OG/Twitter)
+    page.tsx                   # homepage: composes section components
+    globals.css                # Tailwind directives + CSS variable color tokens
+    product/<slug>/page.tsx    # one page per product feature
+    use-cases/<slug>/page.tsx  # one page per audience
+    faq/page.tsx
+    get-started/page.tsx       # Lead form ("Get early access")
+    contact/page.tsx           # Service Case form
+    privacy/page.tsx
+    api/
+      intake/lead/route.ts     # public POST: creates Person, Organization, Lead
+      intake/case/route.ts     # public POST: creates Person, Service Case
+      auth/[...nextauth]/route.ts
+    admin/                     # signed-in CRM; dynamic, never cached
+      layout.tsx               # checks the session, renders the admin chrome
+      leads/page.tsx, leads/[id]/page.tsx
+      cases/page.tsx, cases/[id]/page.tsx
+      people/…, organizations/…, opportunities/…
+  components/                  # marketing components (Header, Footer, Hero, …)
+  components/admin/            # admin-only components (tables, status pickers)
+  components/forms/            # LeadForm, CaseForm (client components)
+  content/                     # copy as data (faq.ts, nav in site.ts)
+  lib/
+    site.ts                    # nav tree, CTA label and target
+    validation/                # Zod schemas: lead.ts, case.ts, admin edits
+  server/                      # server-only code; every file starts with `import 'server-only'`
+    db/schema.ts               # Drizzle tables
+    db/client.ts               # the one database connection
+    services/                  # business logic: leads.ts, cases.ts, people.ts, …
+    email/                     # Resend client and email templates
+    auth.ts                    # Auth.js config and allow-list
+  middleware.ts                # protects /admin/*
+drizzle/                       # generated migrations (committed)
+public/                        # favicon, logo, OG image, screenshots
 ```
 
-**Routing convention**: every top-level nav item is a folder under `src/app/`; every sub-item (a product feature, a use case/persona) is a nested folder with its own `page.tsx`. This gives clean URLs (`/product/chat-plan`, `/use-cases/churches`) for free via the App Router's file-based routing — no router config needed.
+**Routing:** every top-level nav item is a folder under `src/app/`. Every sub-item (a product feature, an audience)
+is a nested folder with its own `page.tsx`. There's no router config.
 
-## Page Composition Pattern
+## The two halves
 
-Every page is a **vertical stack of full-width `<section>` blocks**, each with alternating background (`bg-white` / `bg-background-light`) for visual rhythm:
+### Marketing pages (static)
 
-```tsx
-export default function SomePage() {
-  return (
-    <div className="w-full">
-      <Header />
-      <main className="pt-20">   {/* pt-20 offsets the fixed header */}
-        <HeroSection />
-        <DescriptionSection />
-        <FeatureGridSection />
-        <TabsSection />           {/* optional, interactive */}
-        <CTASection />
-      </main>
-      <Footer />
-    </div>
-  )
-}
-```
+- Everything outside `src/app/api/` and `src/app/admin/` is static: `npm run build` must report those routes as
+  static (○). Never read the database, cookies or headers in a marketing page.
+- Every page is a vertical stack of full-width `<section>` blocks with alternating backgrounds (`bg-background` /
+  `bg-background-light`), under a fixed `Header` (`<main className="pt-20">`) and above a `Footer`.
+- **Homepage**: small single-purpose components in `src/components/`, one per section (`Hero`, `Features`,
+  `HowItWorks`, …).
+- **Product and use-case pages**: shared `ProductHero`, `ProductFeatures` and `CTA` sections. A page may hand-roll a
+  section when its layout differs. Extract a shared component only once a section's *structure* (not just its copy)
+  repeats 3 or more times.
+- Sub-pages open with a breadcrumb (`Product / Mentoring`) back to their parent.
+- Every page ends with the dark `bg-primary-darker` CTA card with one primary button. The button's label and target
+  come from `src/lib/site.ts`.
+- Forms are the only interactive part of a marketing page: `src/components/forms/*` are client components that POST
+  JSON to `/api/intake/*`. The page around them stays static.
 
-Two flavors show up:
-- **Homepage**: imports small, single-purpose components (`<Hero />`, `<Features />`, ...) — one component per section, kept in `src/components/`.
-- **Product/use-case pages**: sections are often inlined directly in the page file (not extracted to components) since each page's copy is unique. Shared visual primitives (`ProductHero`, `ProductFeatures`, `ProductTabs`, `ProductCTA`) exist for the common cases, but pages are free to hand-roll a section when the layout differs slightly.
+### CRM (server)
 
-This is a reasonable tradeoff for a marketing site: extract a component only once a section's *structure* (not just its copy) repeats 3+ times.
+- **The only public endpoints are `POST /api/intake/lead` and `POST /api/intake/case`.** There's no public read
+  endpoint, ever. Any other route handler is admin-only and checks the session.
+- **Route handlers and admin pages stay thin.** They parse input with the Zod schema, call a function in
+  `src/server/services/`, and return the result. Business logic (deduplication, status changes, emails) lives
+  only in services. Only services import `src/server/db`.
+- **Server Actions** are allowed in `/admin` for edits (status, owner, notes). Each one checks the session and
+  validates its input with a Zod schema first.
+- `src/server/**` is server-only and is never imported from a client component.
 
-## Styling System
+### Data model
 
-**Don't hardcode colors in components.** Define them once as CSS variables, map them into Tailwind's theme, and reference the Tailwind tokens everywhere.
+Keep it basic. Every table has `id` (uuid), `createdAt` and `updatedAt`.
 
-1. `globals.css` defines raw hex values as CSS variables under `:root`, with overrides under `.dark`:
-   ```css
-   :root { --color-primary: #2c6ed5; --color-background: #f8f9fa; ... }
-   .dark { --color-background: #111827; ... }
-   ```
-2. `tailwind.config.js` maps those variables to theme colors (`primary`, `background`, `surface`, `text`, `border`, `accent`), plus `darkMode: 'class'`.
-3. Components use the semantic token, and dark mode is automatic — no `dark:` variant needed for colors wired through variables:
-   ```tsx
-   <div className="bg-background text-text border border-border">
-   ```
-   (Note: this codebase has a mix of the semantic tokens above and older explicit `dark:bg-gray-900` style utilities from before the token system existed — new pages should prefer the semantic tokens.)
+| Table | Fields |
+|---|---|
+| `people` | firstName, lastName, email (unique, lowercased), phone, city, country (ISO 3166 alpha-2), role, organizationId |
+| `organizations` | name, type (`church`, `ministry`, `mission_team`, `other`), city, country, website |
+| `leads` | personId, organizationId, sourcePage, interest, message, status (`new`, `contacted`, `qualified`, `converted`, `closed`), ownerEmail |
+| `service_cases` | personId, subject, message, status (`open`, `in_progress`, `resolved`), ownerEmail |
+| `opportunities` | organizationId, leadId, name, stage (`discovery`, `onboarding`, `active`, `lost`), expectedStart, notes |
+| `activities` | recordType, recordId, kind (`note`, `status_change`, `email`), body, authorEmail |
+| `submissions` | kind (`lead`, `case`), ipHash, createdAt (for rate limiting) |
 
-**Fonts**: a Google Font is loaded via `next/font/google` in `layout.tsx` (not a `<link>` tag) for automatic optimization/self-hosting, exposed as a CSS variable, and wired into `tailwind.config.js` under `fontFamily.sans`. A display/body font pair can be added the same way if the design calls for it.
+- Intake deduplicates: a Person is matched by email, an Organization by name and country (case-insensitive).
+  An existing Person's blank fields get filled in, and filled ones are never overwritten by a form.
+- Every status or owner change writes an `activities` row.
+- Change the schema only in `src/server/db/schema.ts`, then `npm run db:generate`. Commit the migration with the
+  change. Never edit an applied migration.
 
-**Icons**: Material Symbols loaded via a Google Fonts `<link>` in the root `<head>`, used via `<span className="material-symbols-outlined">icon_name</span>`.
+## Intake: forms to records
 
-## SEO / Metadata
+1. The visitor fills `LeadForm` or `CaseForm`. Required fields: first name, last name, email, country, and the consent
+   checkbox (linked to `/privacy`). Phone, city, organization, role and message are optional.
+2. The form validates with the same Zod schema the server uses, then POSTs JSON.
+3. The route handler re-validates and drops the request quietly (returning 200) if the hidden honeypot field is
+   filled. It rate-limits to 5 submissions per IP hash per 10 minutes (429), then calls the service.
+4. The service, in one transaction, upserts the Person and Organization, creates the Lead or Service Case, and writes
+   an activity.
+5. After commit, it emails the team inbox (`TEAM_INBOX`) with a link to the record in `/admin`. It also sends the
+   visitor a confirmation. An email failure is logged and never fails the submission.
+6. The form is replaced with: **"Thanks, {first name}. Someone from our team will follow up shortly."**
 
-All metadata (title, description, OG tags, Twitter card, favicon) is set once via the `metadata` export in `layout.tsx` using Next's typed `Metadata` API — no manual `<meta>` tags. Per-page metadata can be added by exporting `metadata` from an individual `page.tsx` (not yet used here, but supported by the App Router) when pages need unique titles/descriptions for SEO.
+Errors are shown next to the field (validation) or as one line above the button (anything else). Never show a stack
+trace or a database message.
 
-## Conventions Worth Repeating
+## Admin
 
-- **Breadcrumb on sub-pages**: product/use-case pages open with a small `Product / Chat & Plan` breadcrumb link back to the parent section.
-- **Consistent CTA pattern**: every page ends with a dark `bg-primary-darker` card containing a headline, subcopy, and a single primary button — usually an external scheduling link (Calendly) rather than a form, since this site has no backend.
-- **Client components only when needed**: pages/components with interactive state (tabs, dropdowns) are marked `'use client'`; static sections stay server components by default for better performance.
-- **Images**: external image hosts must be allow-listed in `next.config.js` under `images.remotePatterns`, or `next/image` will refuse to render them.
+- `/admin/*` requires a session; `middleware.ts` redirects to sign-in otherwise. Sign-in is an emailed magic link,
+  accepted only for addresses in `ADMIN_EMAILS`.
+- v1 screens: Leads and Service Cases (list with status filter, detail with status, owner and notes), then People,
+  Organizations and Opportunities (list, detail, edit; convert a qualified Lead into an Opportunity).
+- Admin pages are dynamic (`export const dynamic = 'force-dynamic'`), carry `robots: { index: false }`, and are left
+  out of the sitemap.
 
-## Scaffolding a New, Similar Site
+## Styling system
 
-1. `npx create-next-app@14 <name> --typescript --tailwind --app`
-2. Copy over: `tailwind.config.js` color/font token structure, `globals.css` variable scheme, `Header`/`Footer`/`DropdownMenu` as a starting chrome.
-3. Define the new brand's palette as CSS variables first — everything else (buttons, cards, CTAs) falls out of the token system for free.
-4. Pick nav structure (top-level sections → nested feature/persona pages) and create matching folders under `src/app/`.
-5. Build the homepage from small section components; build sub-pages as single-file sections, extracting a shared component only when a structure repeats.
-6. Push to GitHub, import into Vercel, attach custom domain. See `README.md` / `QUICK_START.md` for the exact deploy steps.
+**Don't hardcode colors in components.** Define them once as CSS variables, map them into Tailwind's theme, and use
+the tokens everywhere, in the admin area too.
 
-## Related Docs in This Repo
+1. `globals.css` defines the palette as CSS variables under `:root`, with overrides under `.dark`:
+   `--color-primary`, `--color-primary-darker`, `--color-background`, `--color-background-light`, `--color-surface`,
+   `--color-text`, `--color-muted`, `--color-border`, `--color-accent`, `--color-danger`, `--color-success`.
+2. `tailwind.config.js` maps them to `primary`, `primary-darker`, `background`, … with `darkMode: 'class'`.
+3. Components use the tokens: `bg-background text-text border-border`. No hex values, `rgb()`, or raw palette classes
+   like `bg-indigo-600` in components.
 
-- `README.md` — setup, customization, and deployment instructions
-- `QUICK_START.md` — condensed "get it live in 10 minutes" deploy guide
-- `COLORS.md` — full reference for the color token system
+**Fonts:** Manrope via `next/font/google` in `layout.tsx`, exposed as a CSS variable and set as `fontFamily.sans`.
+**Icons:** Material Symbols via a Google Fonts `<link>` in the root head:
+`<span className="material-symbols-outlined">icon_name</span>`.
+
+## Client components only when needed
+
+Mark a component `'use client'` only when it has interactive state: dropdowns, the mobile menu, FAQ accordions, forms,
+admin pickers. Static sections stay server components.
+
+## SEO and metadata
+
+Site-wide metadata (title template, description, OG, Twitter card, favicon) is set once via the `metadata` export in
+`layout.tsx`. Every marketing page exports its own `metadata`. `src/app/sitemap.ts` lists the marketing pages only, and
+`robots.ts` disallows `/admin` and `/api`.
+
+## Privacy and security
+
+- Collect only the fields above. The consent checkbox is required, and its timestamp is stored with the Person.
+- Store a salted hash of the IP (`IP_HASH_SALT`), never the raw IP.
+- Secrets live only in server environment variables, never in `NEXT_PUBLIC_*`, never in client code, and never
+  committed. `.env.example` lists every variable with a placeholder.
+- Never log form contents. Log record ids.
+
+## Environment variables
+
+| Name | Used for |
+|---|---|
+| `DATABASE_URL` | Postgres connection (Neon) |
+| `AUTH_SECRET` | Auth.js session signing |
+| `ADMIN_EMAILS` | comma-separated allow-list for `/admin` |
+| `RESEND_API_KEY` | sending email |
+| `EMAIL_FROM` | sender, e.g. `injily <hello@injily.com>` |
+| `TEAM_INBOX` | where new-lead and new-case notifications go |
+| `IP_HASH_SALT` | salting IP hashes for rate limiting |
+| `NEXT_PUBLIC_SITE_URL` | absolute URLs in metadata and emails |
+
+## Checks
+
+`npm run lint`, `npx tsc --noEmit` and `npm run build` must pass on every change. A schema change includes its
+generated migration.
