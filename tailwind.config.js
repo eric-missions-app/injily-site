@@ -8,6 +8,8 @@ module.exports = {
     extend: {
       colors: {
         primary: token('primary'),
+        'primary-hover': token('primary-hover'),
+        'on-primary': token('on-primary'),
         'primary-darker': token('primary-darker'),
         background: token('background'),
         'background-light': token('background-light'),

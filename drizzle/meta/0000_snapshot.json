@@ -1,5 +1,5 @@
 {
-  "id": "05d0373f-e851-4678-9b28-35ca5cb1f9ac",
+  "id": "47910012-d1c9-4555-b173-5ef897a10bda",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -331,7 +331,7 @@
           "name": "country",
           "type": "varchar(2)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "website": {
           "name": "website",
@@ -354,12 +354,39 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "organizations_name_country_unique": {
+          "name": "organizations_name_country_unique",
+          "columns": [
+            {
+              "expression": "lower(\"name\")",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "country",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
-      "checkConstraints": {},
+      "checkConstraints": {
+        "organizations_country_iso2": {
+          "name": "organizations_country_iso2",
+          "value": "\"organizations\".\"country\" ~ '^[A-Z]{2}$'"
+        }
+      },
       "isRLSEnabled": false
     },
     "public.people": {
@@ -425,7 +452,7 @@
           "name": "consent_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -481,6 +508,10 @@
         "people_email_lowercase": {
           "name": "people_email_lowercase",
           "value": "email = lower(email)"
+        },
+        "people_country_iso2": {
+          "name": "people_country_iso2",
+          "value": "\"people\".\"country\" ~ '^[A-Z]{2}$'"
         }
       },
       "isRLSEnabled": false

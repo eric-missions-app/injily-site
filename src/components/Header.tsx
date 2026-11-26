@@ -2,20 +2,25 @@
 
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import DropdownMenu from '@/components/DropdownMenu';
 import { CTA_HREF, CTA_LABEL, NAV_GROUPS, NAV_LINKS, SITE_NAME } from '@/lib/site';
 
 const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary';
-const ctaClass = `inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-bold text-surface transition-colors hover:bg-primary-darker dark:text-text ${focusRing}`;
+const ctaClass = `inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-bold text-on-primary transition-colors hover:bg-primary-hover ${focusRing}`;
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!menuOpen) return;
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') setMenuOpen(false);
+      if (event.key === 'Escape') {
+        setMenuOpen(false);
+        // The panel unmounts; put focus back on its button instead of letting it drop to <body>.
+        menuButtonRef.current?.focus();
+      }
     }
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
@@ -55,6 +60,7 @@ export default function Header() {
         </div>
 
         <button
+          ref={menuButtonRef}
           type="button"
           aria-expanded={menuOpen}
           aria-controls="mobile-menu"

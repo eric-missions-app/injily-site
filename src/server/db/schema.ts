@@ -53,16 +53,25 @@ export const activityRecordType = pgEnum('activity_record_type', [
 export const activityKind = pgEnum('activity_kind', ['note', 'status_change', 'email']);
 export const submissionKind = pgEnum('submission_kind', ['lead', 'case']);
 
-export const organizations = pgTable('organizations', {
-  id,
-  name: text('name').notNull(),
-  type: organizationType('type').notNull().default('other'),
-  city: text('city'),
-  /** ISO 3166-1 alpha-2 */
-  country: varchar('country', { length: 2 }),
-  website: text('website'),
-  ...timestamps,
-});
+export const organizations = pgTable(
+  'organizations',
+  {
+    id,
+    name: text('name').notNull(),
+    type: organizationType('type').notNull().default('other'),
+    city: text('city'),
+    /** ISO 3166-1 alpha-2, uppercase. Required: intake matches an organization by name + country. */
+    country: varchar('country', { length: 2 }).notNull(),
+    website: text('website'),
+    ...timestamps,
+  },
+  (table) => [
+    // One organization per name (case-insensitive) and country, so concurrent intakes can't create duplicates
+    // and the service can upsert with ON CONFLICT.
+    uniqueIndex('organizations_name_country_unique').on(sql`lower(${table.name})`, table.country),
+    check('organizations_country_iso2', sql`${table.country} ~ '^[A-Z]{2}$'`),
+  ],
+);
 
 export const people = pgTable(
   'people',
@@ -80,13 +89,14 @@ export const people = pgTable(
     organizationId: uuid('organization_id').references(() => organizations.id, {
       onDelete: 'set null',
     }),
-    /** When the person ticked the consent checkbox. */
-    consentAt: timestamp('consent_at', { withTimezone: true }),
+    /** When the person ticked the consent checkbox. Required: every person comes in through a consented form. */
+    consentAt: timestamp('consent_at', { withTimezone: true }).notNull(),
     ...timestamps,
   },
   (table) => [
     uniqueIndex('people_email_unique').on(table.email),
     check('people_email_lowercase', sql`email = lower(email)`),
+    check('people_country_iso2', sql`${table.country} ~ '^[A-Z]{2}$'`),
   ],
 );
 

@@ -46,10 +46,11 @@ CREATE TABLE IF NOT EXISTS "organizations" (
 	"name" text NOT NULL,
 	"type" "organization_type" DEFAULT 'other' NOT NULL,
 	"city" text,
-	"country" varchar(2),
+	"country" varchar(2) NOT NULL,
 	"website" text,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "organizations_country_iso2" CHECK ("organizations"."country" ~ '^[A-Z]{2}$')
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "people" (
@@ -62,10 +63,11 @@ CREATE TABLE IF NOT EXISTS "people" (
 	"country" varchar(2),
 	"role" text,
 	"organization_id" uuid,
-	"consent_at" timestamp with time zone,
+	"consent_at" timestamp with time zone NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "people_email_lowercase" CHECK (email = lower(email))
+	CONSTRAINT "people_email_lowercase" CHECK (email = lower(email)),
+	CONSTRAINT "people_country_iso2" CHECK ("people"."country" ~ '^[A-Z]{2}$')
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "service_cases" (
@@ -124,5 +126,6 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "activities_record_idx" ON "activities" USING btree ("record_type","record_id");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "organizations_name_country_unique" ON "organizations" USING btree (lower("name"),"country");--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "people_email_unique" ON "people" USING btree ("email");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "submissions_ip_hash_created_at_idx" ON "submissions" USING btree ("ip_hash","created_at");

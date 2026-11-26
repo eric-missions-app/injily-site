@@ -22,11 +22,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={manrope.variable}>
       <head>
         {/* Icon font: display=block avoids flashing ligature names ("menu") before it loads. */}
+        {/* One instance (opsz 24, wght 400, unfilled) and only these glyphs; add a name to icon_names (kept
+            alphabetical) whenever a component uses a new icon, or it shows as text. */}
         {/* no-page-custom-font is a Pages Router rule; this is the App Router root layout. */}
         {/* eslint-disable-next-line @next/next/google-font-display, @next/next/no-page-custom-font */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=close,expand_more,menu&display=block"
         />
       </head>
       <body className="font-sans">{children}</body>

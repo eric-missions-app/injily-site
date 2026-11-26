@@ -8,6 +8,8 @@
  */
 :root {
   --color-primary: 79 70 229;
+  --color-primary-hover: 67 56 202;
+  --color-on-primary: 255 255 255;
   --color-primary-darker: 49 46 129;
   --color-background: 255 255 255;
   --color-background-light: 246 247 251;
@@ -21,7 +23,10 @@
 }
 
 .dark {
-  --color-primary: 99 102 241;
+  /* Lighter in dark mode, with dark text on it: 6.5:1 on-primary, 6.5:1 as text on the background. */
+  --color-primary: 129 140 248;
+  --color-primary-hover: 165 180 252;
+  --color-on-primary: 11 13 23;
   --color-primary-darker: 30 27 75;
   --color-background: 11 13 23;
   --color-background-light: 18 21 35;
