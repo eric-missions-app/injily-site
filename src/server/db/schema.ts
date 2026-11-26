@@ -165,3 +165,21 @@ export const submissions = pgTable(
   },
   (table) => [index('submissions_ip_hash_created_at_idx').on(table.ipHash, table.createdAt)],
 );
+
+/**
+ * Admin sign-in: one row per emailed magic link, deleted when it's used. Auth.js stores a hash of the token, never
+ * the token itself. There's no users or sessions table: admins are the addresses in ADMIN_EMAILS, and sessions are
+ * signed JWT cookies.
+ */
+export const verificationTokens = pgTable(
+  'verification_tokens',
+  {
+    id,
+    /** The email address the link was sent to, lowercased. */
+    identifier: text('identifier').notNull(),
+    token: text('token').notNull(),
+    expires: timestamp('expires', { withTimezone: true }).notNull(),
+    ...timestamps,
+  },
+  (table) => [uniqueIndex('verification_tokens_token_unique').on(table.token)],
+);
