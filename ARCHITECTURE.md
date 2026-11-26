@@ -193,6 +193,12 @@ Site-wide metadata (title template, description, OG, Twitter card, favicon) is s
 | `IP_HASH_SALT` | salting IP hashes for rate limiting |
 | `NEXT_PUBLIC_SITE_URL` | absolute URLs in metadata and emails |
 
+## Folder READMEs
+
+Every folder under `src/` (and `drizzle/`) has a `README.md`. It covers what the folder holds, file by file, the rules
+for it, and how to make the common changes. When a change adds or changes what a folder holds, update that folder's
+`README.md` in the same PR. A new folder gets its own.
+
 ## Checks
 
 `npm run lint`, `npx tsc --noEmit` and `npm run build` must pass on every change. A schema change includes its
