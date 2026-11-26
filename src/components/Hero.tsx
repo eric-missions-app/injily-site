@@ -1,15 +1,15 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import FadeIn from '@/components/FadeIn';
 import { CTA_HREF, CTA_LABEL } from '@/lib/site';
 
 const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary';
 
+// Above the fold, so no entrance motion: the copy and illustration show on first paint, without any JavaScript.
 export default function Hero() {
   return (
     <section className="bg-background">
       <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-2 lg:px-8 lg:py-24">
-        <FadeIn>
+        <div>
           <p className="inline-flex rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
             Discipleship made simple
           </p>
@@ -34,18 +34,16 @@ export default function Hero() {
               See how it works
             </a>
           </div>
-        </FadeIn>
+        </div>
 
-        <FadeIn delay={0.15}>
-          <Image
-            src="/hero-illustration.svg"
-            alt="The injily dashboard: a list of new believers with their follow-up status, an upcoming meeting and a mentor pairing."
-            width={640}
-            height={480}
-            priority
-            className="h-auto w-full"
-          />
-        </FadeIn>
+        <Image
+          src="/hero-illustration.svg"
+          alt="The injily dashboard: a list of new believers with their follow-up status, an upcoming meeting and a mentor pairing."
+          width={640}
+          height={480}
+          priority
+          className="h-auto w-full"
+        />
       </div>
     </section>
   );
