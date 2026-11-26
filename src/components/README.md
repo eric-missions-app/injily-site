@@ -1,7 +1,7 @@
 # src/components/
 
-React components for the marketing pages. Admin-only components go in `admin/` (J-4), and the two forms go in
-`forms/` (J-11).
+React components for the marketing pages. Admin-only components are in [`admin/`](admin/README.md), and the two
+forms go in `forms/` (J-11).
 
 ## What's here now
 
@@ -19,7 +19,7 @@ React components for the marketing pages. Admin-only components go in `admin/` (
 | `HowItWorks`, `Audiences`, `FaqPreview`, `CTA` | J-7 | `CTA` is the dark `bg-primary-darker` card every page ends with |
 | `ProductHero`, `ProductFeatures` | J-8 | shared by the 5 product and 3 use-case pages |
 | `forms/LeadForm`, `forms/CaseForm` | J-11 | client components that POST to `/api/intake/*` |
-| `admin/*` | J-4, J-5 | tables, status pickers, note box |
+| `admin/*` | J-5 | more admin components for People, Organizations and Opportunities |
 
 ## Rules
 
