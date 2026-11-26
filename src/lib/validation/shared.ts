@@ -43,7 +43,11 @@ export const contactFields = {
     .toUpperCase()
     .regex(/^[A-Z]{2}$/, { error: 'Choose your country.' }),
   organizationName: optionalText('the organization name', 200),
-  organizationType: z.enum(ORGANIZATION_TYPES, { error: 'Choose an organization type.' }).optional(),
+  /** An unchosen `<select>` sends `""`, which becomes `undefined` like any other blank optional field. */
+  organizationType: z
+    .union([z.literal(''), z.enum(ORGANIZATION_TYPES)], { error: 'Choose an organization type.' })
+    .optional()
+    .transform((value) => value || undefined),
   role: optionalText('your role', 100),
   message: optionalText('the message', 2000),
   sourcePage: optionalText('the source page', 500),

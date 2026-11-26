@@ -27,7 +27,8 @@ handler or Server Action)**, so nothing here imports from `@/server` or reads a 
 | `subject` | case only, **required** |
 | `website` | the honeypot: a hidden field people never fill. The route accepts a filled one with 200 and stores nothing. |
 
-Optional text is trimmed, and an empty string becomes `undefined`, so a blank form field never counts as a value.
+Optional text is trimmed. In every optional text field and in `organizationType`, an empty string becomes
+`undefined`, so a blank form field never counts as a value.
 Error messages are written for the visitor; the form shows them next to the field.
 
 ## Adding a schema
