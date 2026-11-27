@@ -42,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* eslint-disable-next-line @next/next/google-font-display, @next/next/no-page-custom-font */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=arrow_forward,calendar_month,campaign,church,close,diversity_3,event_repeat,expand_more,flag,groups,history,how_to_reg,insights,leaderboard,location_on,mail,menu,notification_important,notifications,palette,person_add,person_search,public,sticky_note_2,swap_horiz,task_alt,trending_up,upload_file,view_kanban,visibility_off&display=block"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=arrow_forward,campaign,church,close,expand_more,groups,how_to_reg,menu,person_add,person_search,sticky_note_2,visibility_off&display=block"
         />
       </head>
       <body className="font-sans">

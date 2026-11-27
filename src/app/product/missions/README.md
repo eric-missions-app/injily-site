@@ -4,6 +4,6 @@ The Missions product page, at `/product/missions`. Follows the rules in [../READ
 
 | File | What it does |
 |---|---|
-| `page.tsx` | `metadata`, then `ProductHero` ("Product / Missions", with `MissionsVisual`: one outreach with its location, schedule, assigned missioners and converts registered against it, and a monthly goal with a progress bar towards its target count), `ProductFeatures` with four points (missions and outreach events with a location and schedule; missioners assigned to a mission; converts registered against the mission they came from; goals with a target count, daily, weekly or monthly), and `CTA`. |
+| `page.tsx` | `metadata`, then `ProductHero` ("Product / Missions", "Follow up with every new believer from your outreach.", and the intro: we're building injily to help mission and outreach teams follow up with every new believer they meet), `ProductFeatures` "What we're building" with three points (keep track of every new believer from your outreach; someone responsible for each person; see who needs attention), and `CTA`. |
 
-The homepage's Mission Campaigns card links here.
+The Mission teams use-case page links here.

@@ -4,6 +4,4 @@ The Follow-up product page, at `/product/follow-up`. Follows the rules in [../RE
 
 | File | What it does |
 |---|---|
-| `page.tsx` | `metadata`, then `ProductHero` ("Product / Follow-up", with `FollowUpVisual`: two follow-up tasks with due dates and priority, and a week's calendar with daily and weekly repeating events and a reminder), `ProductFeatures` with four points (follow-up tasks with due dates and priority, linked to a convert; tasks by status at a glance; a calendar with daily, weekly and monthly repeating events; reminders for follow-up meetings, prayer and discipleship classes), and `CTA`. |
-
-The homepage's Task Management and Calendar & Planner cards both link here, so the page covers both.
+| `page.tsx` | `metadata`, then `ProductHero` ("Product / Follow-up", "Make sure every new believer is followed up.", and the intro: we're building injily to help your team follow up with every new believer, with someone responsible for each person), `ProductFeatures` "What we're building" with three points (someone responsible for each person; nobody slips through the cracks; see who needs attention), and `CTA`. |
