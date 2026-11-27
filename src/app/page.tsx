@@ -17,7 +17,7 @@ export default function HomePage() {
         <Features />
         <Audiences />
         <FaqPreview />
-        <CTA />
+        <CTA tone="light" />
       </main>
       <Footer />
     </>
