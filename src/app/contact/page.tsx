@@ -17,7 +17,7 @@ export default function ContactPage() {
           <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
             <h1 className="text-4xl font-extrabold tracking-tight text-text sm:text-5xl">Contact us</h1>
             <p className="mt-4 text-lg text-muted">
-              Have a question? Send us a message and someone from our team will get back to you.
+              Send us a question and someone from our team will get back to you.
             </p>
           </div>
         </section>

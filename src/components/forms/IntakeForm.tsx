@@ -3,18 +3,9 @@
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
 import { z } from 'zod';
-import { COUNTRIES } from '@/content/countries';
 import { firstWord } from '@/lib/format';
-import { ORGANIZATION_TYPES } from '@/lib/validation/shared';
 
 type FieldErrors = Partial<Record<string, string[]>>;
-
-const ORGANIZATION_TYPE_LABELS: Record<(typeof ORGANIZATION_TYPES)[number], string> = {
-  church: 'Church',
-  ministry: 'Ministry',
-  mission_team: 'Mission team',
-  other: 'Other',
-};
 
 const GENERIC_ERROR = 'Something went wrong. Please try again in a few minutes.';
 
@@ -26,8 +17,10 @@ type IntakeFormProps = {
   schema: z.ZodType<{ name: string }, unknown>;
   endpoint: '/api/intake/lead' | '/api/intake/case';
   submitLabel: string;
-  /** The case form's required subject field. */
-  withSubject?: boolean;
+  /** The optional organization field's label; leave it out for no organization field. */
+  organizationLabel?: string;
+  /** The message field's label, and whether the schema requires it. */
+  message: { label: string; required?: boolean };
   /** Extra values sent with the form, read at submit time (the lead's `sourcePage`). */
   extraValues?: () => Record<string, string | undefined>;
 };
@@ -37,7 +30,14 @@ type IntakeFormProps = {
  * route handler, POSTs JSON, and replaces itself with the follow-up confirmation on success. Inputs are uncontrolled,
  * so a failed submit keeps everything the visitor typed.
  */
-export default function IntakeForm({ schema, endpoint, submitLabel, withSubject, extraValues }: IntakeFormProps) {
+export default function IntakeForm({
+  schema,
+  endpoint,
+  submitLabel,
+  organizationLabel,
+  message,
+  extraValues,
+}: IntakeFormProps) {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState(false);
   const [sending, setSending] = useState(false);
@@ -53,7 +53,6 @@ export default function IntakeForm({ schema, endpoint, submitLabel, withSubject,
     data.forEach((value, key) => {
       if (typeof value === 'string') values[key] = value;
     });
-    values.consent = data.get('consent') === 'on';
 
     const parsed = schema.safeParse(values);
     if (!parsed.success) {
@@ -107,57 +106,21 @@ export default function IntakeForm({ schema, endpoint, submitLabel, withSubject,
   const error = (name: string) => fieldErrors[name]?.[0];
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} noValidate className="grid gap-6 sm:grid-cols-2">
+    <form ref={formRef} onSubmit={handleSubmit} noValidate className="grid gap-6">
       <TextField name="name" label="Name" required autoComplete="name" error={error('name')} />
-      <TextField
-        name="email"
-        label="Email"
-        type="email"
-        required
-        autoComplete="email"
-        error={error('email')}
-      />
-      <TextField name="phone" label="Phone" type="tel" autoComplete="tel" error={error('phone')} />
-      <TextField
-        name="organizationName"
-        label="Organization"
-        autoComplete="organization"
-        error={error('organizationName')}
-      />
-      <Field label="Organization type" error={error('organizationType')}>
-        {(props) => (
-          <select name="organizationType" defaultValue="" {...props}>
-            <option value="">Choose a type</option>
-            {ORGANIZATION_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {ORGANIZATION_TYPE_LABELS[type]}
-              </option>
-            ))}
-          </select>
-        )}
-      </Field>
-      <TextField name="role" label="Role" autoComplete="organization-title" error={error('role')} />
-      <TextField name="city" label="City" autoComplete="address-level2" error={error('city')} />
-      <Field label="Country" required error={error('country')}>
-        {(props) => (
-          <select name="country" defaultValue="" autoComplete="country" {...props}>
-            <option value="">Choose your country</option>
-            {COUNTRIES.map((country) => (
-              <option key={country.code} value={country.code}>
-                {country.name}
-              </option>
-            ))}
-          </select>
-        )}
-      </Field>
-      {withSubject && (
-        <TextField name="subject" label="Subject" required error={error('subject')} className="sm:col-span-2" />
+      <TextField name="email" label="Email" type="email" required autoComplete="email" error={error('email')} />
+      <TextField name="phone" label="Phone" type="tel" required autoComplete="tel" error={error('phone')} />
+      {organizationLabel && (
+        <TextField
+          name="organizationName"
+          label={organizationLabel}
+          autoComplete="organization"
+          error={error('organizationName')}
+        />
       )}
-      <Field label="Message" error={error('message')} className="sm:col-span-2">
+      <Field label={message.label} required={message.required} error={error('message')}>
         {(props) => <textarea name="message" rows={5} {...props} />}
       </Field>
-
-      <ConsentField error={error('consent')} />
 
       {/* Honeypot: hidden from people and assistive tech and never focused, so only bots fill it. */}
       <div aria-hidden="true" className="absolute -left-[10000px] h-px w-px overflow-hidden">
@@ -167,7 +130,7 @@ export default function IntakeForm({ schema, endpoint, submitLabel, withSubject,
         </label>
       </div>
 
-      <div className="sm:col-span-2">
+      <div>
         {formError && (
           <p role="alert" className="mb-4 text-sm font-semibold text-danger">
             {GENERIC_ERROR}
@@ -180,6 +143,18 @@ export default function IntakeForm({ schema, endpoint, submitLabel, withSubject,
         >
           {sending ? 'Sending…' : submitLabel}
         </button>
+        <p className="mt-3 text-sm text-muted">
+          By sending this you agree to our{' '}
+          {/* A new tab, so reading the policy never loses what was typed or changes the lead's `sourcePage`. */}
+          <a
+            href="/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-sm underline underline-offset-2 hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          >
+            privacy policy<span className="sr-only"> (opens in a new tab)</span>
+          </a>
+        </p>
       </div>
     </form>
   );
@@ -198,19 +173,17 @@ function Field({
   label,
   required,
   error,
-  className,
   children,
 }: {
   label: string;
   required?: boolean;
   error?: string;
-  className?: string;
   children: (props: ControlProps) => ReactNode;
 }) {
   const id = useId();
   const errorId = `${id}-error`;
   return (
-    <div className={className}>
+    <div>
       <label htmlFor={id} className="block text-sm font-semibold text-text">
         {label}
         {required && (
@@ -243,7 +216,6 @@ function TextField({
   required,
   autoComplete,
   error,
-  className,
 }: {
   name: string;
   label: string;
@@ -251,53 +223,11 @@ function TextField({
   required?: boolean;
   autoComplete?: string;
   error?: string;
-  className?: string;
 }) {
   return (
-    <Field label={label} required={required} error={error} className={className}>
+    <Field label={label} required={required} error={error}>
       {(props) => <input type={type} name={name} autoComplete={autoComplete} {...props} />}
     </Field>
-  );
-}
-
-function ConsentField({ error }: { error?: string }) {
-  const id = useId();
-  const errorId = `${id}-error`;
-  return (
-    <div className="sm:col-span-2">
-      <div className="flex items-start gap-3">
-        <input
-          id={id}
-          type="checkbox"
-          name="consent"
-          aria-required="true"
-          aria-invalid={error ? true : undefined}
-          aria-describedby={error ? errorId : undefined}
-          className="mt-1 h-4 w-4 shrink-0 rounded border-border accent-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        />
-        <label htmlFor={id} className="text-sm text-text">
-          I agree to the{' '}
-          {/* A new tab, so reading the policy never loses what was typed or changes the lead's `sourcePage`. */}
-          <a
-            href="/privacy"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-sm font-semibold text-primary underline underline-offset-2 hover:text-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          >
-            privacy policy<span className="sr-only"> (opens in a new tab)</span>
-          </a>
-          <span aria-hidden="true" className="text-danger">
-            {' '}
-            *
-          </span>
-        </label>
-      </div>
-      {error && (
-        <p id={errorId} className="mt-2 text-sm text-danger">
-          {error}
-        </p>
-      )}
-    </div>
   );
 }
 

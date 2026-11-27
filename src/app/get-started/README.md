@@ -7,7 +7,7 @@ the site lands on this page.
 
 | File | What it does |
 |---|---|
-| `page.tsx` | A static page with its own `metadata`: the "Get early access" heading, a short paragraph on what happens next (a person from the team gets in touch), and `LeadForm` (`@/components/forms/LeadForm`), then the Footer. |
+| `page.tsx` | A static page with its own `metadata`: the "Get early access" heading, one sentence on what happens next (someone from the team gets in touch), and `LeadForm` (`@/components/forms/LeadForm`), then the Footer. |
 
 ## Rules
 
