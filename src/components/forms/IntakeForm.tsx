@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { flushSync } from 'react-dom';
 import { z } from 'zod';
 import { COUNTRIES } from '@/content/countries';
 import { ORGANIZATION_TYPES } from '@/lib/validation/shared';
@@ -90,7 +90,8 @@ export default function IntakeForm({ schema, endpoint, submitLabel, withSubject,
 
   /** Shows the errors and moves focus to the first invalid field, in form order. */
   function showFieldErrors(errors: FieldErrors) {
-    setFieldErrors(errors);
+    // Render before focusing, so a screen reader announces the field together with its error.
+    flushSync(() => setFieldErrors(errors));
     for (const element of Array.from(formRef.current?.elements ?? [])) {
       const name = (element as HTMLInputElement).name;
       if (name && errors[name]) {
@@ -276,12 +277,15 @@ function ConsentField({ error }: { error?: string }) {
         />
         <label htmlFor={id} className="text-sm text-text">
           I agree to the{' '}
-          <Link
+          {/* A new tab, so reading the policy never loses what was typed or changes the lead's `sourcePage`. */}
+          <a
             href="/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
             className="rounded-sm font-semibold text-primary underline underline-offset-2 hover:text-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
-            privacy policy
-          </Link>
+            privacy policy<span className="sr-only"> (opens in a new tab)</span>
+          </a>
           <span aria-hidden="true" className="text-danger">
             {' '}
             *

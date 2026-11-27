@@ -18,12 +18,13 @@ that validate with the Zod schema from `@/lib/validation` (the same one the rout
 
 1. **Fields:** first name\*, last name\*, email\*, phone, organization, organization type, role, city, country\*
    (a select of `COUNTRIES` from `@/content/countries`, sending the ISO code), Subject\* (case only), message, and the
-   consent checkbox\* linking to `/privacy`. Every field has a visible label; required ones show `*`.
+   consent checkbox\* linking to `/privacy`. Every field has a visible label; required ones show `*`. The privacy link
+   is a plain `<a>` that opens in a new tab, so the form keeps its values and `sourcePage` is unaffected.
 2. **Honeypot:** a `website` input, off-screen, `aria-hidden`, `tabIndex={-1}` and `autoComplete="off"`, so people
    and keyboards never reach it. The server accepts a filled one and stores nothing.
 3. **Validation:** the form has `noValidate`; the Zod schema runs first, and its messages show under each field
-   (`aria-invalid` and `aria-describedby` set, focus moves to the first invalid field). No request is sent until it
-   passes. A 400 from the server with `fieldErrors` is shown the same way.
+   (`aria-invalid` and `aria-describedby` set, then focus moves to the first invalid field, once the errors have
+   rendered). No request is sent until it passes. A 400 from the server with `fieldErrors` is shown the same way.
 4. **Sending:** the button is disabled and reads "Sending…". A 429 or any other failure shows one line above the
    button: "Something went wrong. Please try again in a few minutes." Inputs are uncontrolled, so the values stay.
 5. **Success:** the form is replaced by "Thanks, {first name}. Someone from our team will follow up shortly.", which
