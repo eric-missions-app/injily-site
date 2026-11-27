@@ -8,7 +8,7 @@ import { FAQ } from '@/content/faq';
 export const metadata: Metadata = {
   title: 'FAQ',
   description:
-    'Answers to common questions about injily: who it is for, whether converts need an account, privacy, cost, the mobile app and how to get started.',
+    'Answers to common questions about injily: what it is, who it is for, whether it is available yet and how to get started.',
 };
 
 export default function FaqPage() {

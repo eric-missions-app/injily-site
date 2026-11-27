@@ -6,29 +6,29 @@ const AUDIENCES = [
     icon: 'church',
     title: 'Churches & pastors',
     href: '/use-cases/churches',
-    body: 'See every new believer in your congregation and make sure each one is followed up.',
+    body: 'Make sure every person who responds at your church is followed up.',
   },
   {
     icon: 'campaign',
-    title: 'Evangelists & missioners',
+    title: 'Evangelists',
     href: '/use-cases/evangelists',
-    body: 'Hand every convert to a local church and know they were welcomed.',
+    body: 'Make sure someone on your team follows up with every person who responds when you share the gospel.',
   },
   {
     icon: 'groups',
     title: 'Mission & outreach teams',
     href: '/use-cases/mission-teams',
-    body: 'Coordinate follow-up after every outreach, across your team and the churches you serve.',
+    body: 'Make sure every new believer from your outreach has someone on your team following up.',
   },
 ];
 
 export default function Audiences() {
   return (
-    <section id="audiences" className="scroll-mt-20 bg-background">
+    <section id="audiences" className="scroll-mt-20 bg-background-light">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <FadeIn className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-extrabold tracking-tight text-text sm:text-4xl">Who it&apos;s for</h2>
-          <p className="mt-4 text-lg text-muted">Built for everyone who meets new believers and wants to see them grow.</p>
+          <p className="mt-4 text-lg text-muted">For everyone who meets new believers and wants to see each one followed up.</p>
         </FadeIn>
 
         <ul className="mt-12 grid gap-6 md:grid-cols-3">

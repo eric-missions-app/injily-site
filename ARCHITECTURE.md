@@ -79,8 +79,8 @@ is a nested folder with its own `page.tsx`. There's no router config.
   static (○). Never read the database, cookies or headers in a marketing page.
 - Every page is a vertical stack of full-width `<section>` blocks with alternating backgrounds (`bg-background` /
   `bg-background-light`), under a fixed `Header` (`<main className="pt-20">`) and above a `Footer`.
-- **Homepage**: small single-purpose components in `src/components/`, one per section (`Hero`, `Features`,
-  `HowItWorks`, …).
+- **Homepage**: small single-purpose components in `src/components/`, one per section (`Hero`, `WhyItMatters`,
+  `Features`, `Audiences`, `FaqPreview`, then `CTA`).
 - **Product and use-case pages**: shared `ProductHero`, `ProductFeatures` and `CTA` sections. A page may hand-roll a
   section when its layout differs. Extract a shared component only once a section's *structure* (not just its copy)
   repeats 3 or more times.
@@ -146,6 +146,20 @@ trace or a database message.
   Organizations and Opportunities (list, detail, edit; convert a qualified Lead into an Opportunity).
 - Admin pages are dynamic (`export const dynamic = 'force-dynamic'`), carry `robots: { index: false }`, and are left
   out of the sitemap.
+
+## Content rules
+
+injily isn't built yet, so the site only says what it is **being built** to do. These are the only product claims
+allowed:
+
+- injily is being built to help churches, evangelists and mission teams follow up with new believers: keep track of
+  each person after they respond, make sure someone is responsible for following up, and see who needs attention.
+- Say it in the future tense or as "we're building". Never write a sentence that says a feature works today.
+- Nothing more specific: no numbers or time rules (like "14 days"), no import, no sign-in or email features, no
+  branding, messaging, goals, dashboards, reports, calendars, reminders, pipelines or stage names, no multi-church
+  features, no pricing, no privacy or security promises, no "works on your phone" or "nothing to install".
+- No mockups or invented screenshots, people, churches, numbers, prices or promises unless a ticket states them word
+  for word.
 
 ## Styling system
 
