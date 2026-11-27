@@ -1,7 +1,7 @@
 # src/components/
 
-React components for the marketing pages. Admin-only components go in `admin/` (J-4), and the two forms go in
-`forms/` (J-11).
+React components for the marketing pages. Admin-only components are in [`admin/`](admin/README.md), and the two
+forms go in `forms/` (J-11).
 
 ## What's here now
 
@@ -17,7 +17,7 @@ React components for the marketing pages. Admin-only components go in `admin/` (
 | `HowItWorks.tsx` | no | Homepage `#how-it-works` (the Hero's "See how it works" target): "How it works", the numbered steps 01 Register a convert, 02 Assign & schedule, 03 Track & grow, and the discipleship pipeline as three stages: New believer, Growing, Mature. |
 | `Audiences.tsx` | no | Homepage "Who it's for": three cards (Churches & pastors, Evangelists & missioners, Mission & outreach teams), one line each. The whole card links to its `/use-cases/<slug>` page. |
 | `FaqPreview.tsx` | yes | Homepage FAQ: an accordion of the first four entries from `@/content/faq` (one open at a time; real buttons with `aria-expanded`, so Tab and Enter work) and a "See all questions" link to `/faq`. Answers are in the server HTML, hidden until opened. |
-| `CTA.tsx` | no | The dark `bg-primary-darker` card every marketing page ends with (not `/get-started` or `/contact`): "Ready to strengthen your church's follow-up?", "Make disciples, not just decisions." and one `CTA_LABEL` button to `CTA_HREF`. No props: put `<CTA />` after the page's last section. |
+| `CTA.tsx` | no | The dark `bg-primary-darker` card every marketing page ends with (not `/get-started`, `/contact` or `/privacy`): "Ready to strengthen your church's follow-up?", "Make disciples, not just decisions." and one `CTA_LABEL` button to `CTA_HREF`. No props: put `<CTA />` after the page's last section. |
 
 ## Coming next
 
@@ -25,7 +25,7 @@ React components for the marketing pages. Admin-only components go in `admin/` (
 |---|---|---|
 | `ProductHero`, `ProductFeatures` | J-8 | shared by the 5 product and 3 use-case pages |
 | `forms/LeadForm`, `forms/CaseForm` | J-11 | client components that POST to `/api/intake/*` |
-| `admin/*` | J-4, J-5 | tables, status pickers, note box |
+| `admin/*` | J-5 | more admin components for People, Organizations and Opportunities |
 
 ## Rules
 
