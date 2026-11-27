@@ -12,7 +12,8 @@ editing this file and nothing else.
 
 | Export | What it is |
 |---|---|
-| `SITE_NAME` | `'injily'`, used for the wordmark and the footer |
+| `SITE_NAME` | `'injily'`, used for the wordmark, the footer and the page titles |
+| `SITE_URL` | the public origin without a trailing slash: `NEXT_PUBLIC_SITE_URL`, or `https://injily.com` if unset. Used for `metadataBase`, the sitemap and robots.txt. |
 | `CTA_LABEL`, `CTA_HREF` | `'Get early access'` → `/get-started`. Every call-to-action button uses these. |
 | `PRODUCT_NAV` | the Product dropdown: 5 links to `/product/<slug>` |
 | `USE_CASES_NAV` | the Who it's for dropdown: 3 links to `/use-cases/<slug>` |

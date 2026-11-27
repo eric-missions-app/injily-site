@@ -5,8 +5,14 @@ screenshots live here.
 
 ## What's here now
 
-Nothing yet. The hero's app mockup was removed: the site shows no mockups or invented screenshots (see "Content
-rules" in `ARCHITECTURE.md`).
+| File | Used by |
+|---|---|
+| `favicon.svg` | The site icon (an "i" on the primary color), set in `metadata.icons` in `src/app/layout.tsx`. |
+
+The social card isn't here: it's rendered at build time from `src/app/opengraph-image.tsx`.
+
+The hero's app mockup was removed: the site shows no mockups or invented screenshots (see "Content rules" in
+`ARCHITECTURE.md`).
 
 ## Rules
 

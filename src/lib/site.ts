@@ -1,5 +1,8 @@
 export const SITE_NAME = 'injily';
 
+/** The public origin, no trailing slash: absolute URLs in metadata, the sitemap and robots.txt. */
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://injily.com').replace(/\/+$/, '');
+
 export const CTA_LABEL = 'Get early access';
 export const CTA_HREF = '/get-started';
 
