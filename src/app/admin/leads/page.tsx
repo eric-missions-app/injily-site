@@ -45,7 +45,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: { stat
               <tr key={lead.id} className="hover:bg-background-light">
                 <td className="px-4 py-3 font-semibold">
                   <Link href={`/admin/leads/${lead.id}`} className={`rounded hover:text-primary ${focusRing}`}>
-                    {lead.firstName} {lead.lastName}
+                    {lead.name}
                   </Link>
                 </td>
                 <td className="px-4 py-3">{lead.organizationName ?? '—'}</td>

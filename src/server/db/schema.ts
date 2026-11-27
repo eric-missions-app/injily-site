@@ -60,15 +60,18 @@ export const organizations = pgTable(
     name: text('name').notNull(),
     type: organizationType('type').notNull().default('other'),
     city: text('city'),
-    /** ISO 3166-1 alpha-2, uppercase. Required: intake matches an organization by name + country. */
-    country: varchar('country', { length: 2 }).notNull(),
+    /** ISO 3166-1 alpha-2, uppercase, or null when unknown (the intake forms don't ask for it). */
+    country: varchar('country', { length: 2 }),
     website: text('website'),
     ...timestamps,
   },
   (table) => [
-    // One organization per name (case-insensitive) and country, so concurrent intakes can't create duplicates
-    // and the service can upsert with ON CONFLICT.
-    uniqueIndex('organizations_name_country_unique').on(sql`lower(${table.name})`, table.country),
+    // One organization per name (case-insensitive) and country, with "no country" counting as one value, so
+    // concurrent intakes can't create duplicates and the service can upsert with ON CONFLICT.
+    uniqueIndex('organizations_name_country_unique').on(
+      sql`lower(${table.name})`,
+      sql`coalesce(${table.country}, '')`,
+    ),
     check('organizations_country_iso2', sql`${table.country} ~ '^[A-Z]{2}$'`),
   ],
 );
@@ -77,10 +80,11 @@ export const people = pgTable(
   'people',
   {
     id,
-    firstName: text('first_name').notNull(),
-    lastName: text('last_name').notNull(),
+    /** The person's name in one field, as they typed it. */
+    name: text('name').notNull(),
     /** Stored lowercased; unique. */
     email: text('email').notNull(),
+    /** The intake forms require it; nullable because the admin may add people without one. */
     phone: text('phone'),
     city: text('city'),
     /** ISO 3166-1 alpha-2 */
@@ -89,7 +93,7 @@ export const people = pgTable(
     organizationId: uuid('organization_id').references(() => organizations.id, {
       onDelete: 'set null',
     }),
-    /** When the person ticked the consent checkbox. Required: every person comes in through a consented form. */
+    /** When the person last submitted a form (shown with its privacy notice). Required: everyone comes in that way. */
     consentAt: timestamp('consent_at', { withTimezone: true }).notNull(),
     ...timestamps,
   },

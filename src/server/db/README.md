@@ -24,8 +24,8 @@ Every table has `id` (uuid, generated), `created_at` and `updated_at`. `updated_
 
 | Table | Holds | Important constraints |
 |---|---|---|
-| `organizations` | name, type (`church`, `ministry`, `mission_team`, `other`), city, country, website | **unique on `lower(name)` + `country`**; `country` required, 2 uppercase letters |
-| `people` | first/last name, email, phone, city, country, role, organization, `consent_at` | **unique `email`, stored lowercase** (enforced by a check); `consent_at` required; `country` 2 uppercase letters |
+| `organizations` | name, type (`church`, `ministry`, `mission_team`, `other`), city, country, website | **unique on `lower(name)` + `coalesce(country, '')`**; `country` optional, 2 uppercase letters when set |
+| `people` | name (one field), email, phone, city, country, role, organization, `consent_at` | **unique `email`, stored lowercase** (enforced by a check); `name` and `consent_at` required; `phone` nullable (the forms require it, the admin doesn't); `country` 2 uppercase letters |
 | `leads` | person, organization, source page, interest, message, status (`new` → `contacted` → `qualified` → `converted` / `closed`), owner email | person required (deleted with the person) |
 | `service_cases` | person, subject, message, status (`open` → `in_progress` → `resolved`), owner email | person required |
 | `opportunities` | organization, lead, name, stage (`discovery`, `onboarding`, `active`, `lost`), expected start, notes | |
@@ -37,10 +37,12 @@ Every table has `id` (uuid, generated), `created_at` and `updated_at`. `updated_
 
 - **People** are upserted by email. Normalize it with `email.trim().toLowerCase()` before the query. The check
   constraint rejects mixed case, so a forgotten normalization fails loudly and can't create a duplicate.
-- **Organizations** are upserted with `ON CONFLICT (lower(name), country)`. Two visitors from the same church
-  submitting at the same moment get one organization, not two. Countries are always uppercase ISO codes (`BR`, not
-  `br` or `Brazil`), and the Zod schema converts them before the service runs.
-- **Consent:** a person can't be saved without `consent_at`. Set it to the time of the submission.
+- **Organizations** are upserted with `ON CONFLICT (lower(name), coalesce(country, ''))`. Two visitors from the same
+  church submitting at the same moment get one organization, not two. The forms don't ask for a country, so intake
+  organizations have none, and "no country" counts as one value in the index. A country set in the admin is always an
+  uppercase ISO code (`BR`, not `br` or `Brazil`); the Zod schema converts it before the service runs.
+- **Consent:** a person can't be saved without `consent_at`. Set it to the time of the submission (the forms show a
+  privacy notice next to the button).
 
 ## Changing the schema
 

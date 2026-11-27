@@ -79,8 +79,7 @@ const countryCode = z
 /** Edit a Person. Phone, city, country, role and organization may be left empty. */
 export const personEditInput = z.object({
   id: z.uuid(),
-  firstName: requiredText('first name', 100),
-  lastName: requiredText('last name', 100),
+  name: requiredText('name', 120),
   email: z
     .string({ error: 'Enter a valid email address.' })
     .trim()
@@ -98,13 +97,13 @@ export const personEditInput = z.object({
 });
 export type PersonEditInput = z.infer<typeof personEditInput>;
 
-/** Edit an Organization. Name, type and country are required: intake matches an organization by name + country. */
+/** Edit an Organization. Name and type are required; city, country and website may be left empty. */
 export const organizationEditInput = z.object({
   id: z.uuid(),
   name: requiredText('name', 200),
   type: z.enum(ORGANIZATION_TYPES, { error: 'Pick a type from the list.' }),
   city: optionalText('city', 100),
-  country: z.string({ error: 'Enter a two-letter country code, like BR.' }).pipe(countryCode),
+  country: z.string().trim().optional().transform(emptyToNull).pipe(countryCode.nullable()),
   website: optionalText('website', 300),
 });
 export type OrganizationEditInput = z.infer<typeof organizationEditInput>;

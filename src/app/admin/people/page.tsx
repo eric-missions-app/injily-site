@@ -54,7 +54,7 @@ export default async function PeoplePage({ searchParams }: { searchParams: { q?:
               <tr key={person.id} className="hover:bg-background-light">
                 <td className="px-4 py-3 font-semibold">
                   <Link href={`/admin/people/${person.id}`} className={`rounded hover:text-primary ${focusRing}`}>
-                    {person.firstName} {person.lastName}
+                    {person.name}
                   </Link>
                 </td>
                 <td className="px-4 py-3">{person.email}</td>

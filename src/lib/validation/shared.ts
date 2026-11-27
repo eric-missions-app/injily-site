@@ -22,36 +22,35 @@ export function optionalText(label: string, max: number) {
     .transform((value) => (value ? value : undefined));
 }
 
+const PHONE_ERROR = 'Enter a valid phone number.';
+
 /**
- * The fields every intake form shares: who the visitor is, their organization, consent, and the honeypot.
- * `lead.ts` and `case.ts` extend this with their own fields.
+ * A phone number as people type it: 7 to 25 characters of digits, spaces and `+()-.`, with at least 7 digits
+ * (`+55 81 99999-0000`, `(555) 123-4567`). Stored as typed, trimmed.
+ */
+export const phoneNumber = z
+  .string({ error: 'Enter your phone number.' })
+  .trim()
+  .min(1, { error: 'Enter your phone number.' })
+  .regex(/^[0-9 +().-]{7,25}$/, { error: PHONE_ERROR })
+  .refine((value) => (value.match(/\d/g) ?? []).length >= 7, { error: PHONE_ERROR });
+
+/**
+ * The fields every intake form shares: who the visitor is, their organization, the message, and the honeypot.
+ * `lead.ts` and `case.ts` build on this. There's no consent field: the form shows a privacy notice by the button,
+ * and intake records the submission time as `consentAt`.
  */
 export const contactFields = {
-  firstName: requiredText('your first name', 100),
-  lastName: requiredText('your last name', 100),
+  name: requiredText('your name', 120),
   email: z
     .string({ error: 'Enter your email address.' })
     .trim()
     .toLowerCase()
     .pipe(z.email({ error: 'Enter a valid email address.' }).max(254)),
-  phone: optionalText('the phone number', 40),
-  city: optionalText('the city', 100),
-  /** ISO 3166-1 alpha-2, converted to uppercase (`br` → `BR`). */
-  country: z
-    .string({ error: 'Choose your country.' })
-    .trim()
-    .toUpperCase()
-    .regex(/^[A-Z]{2}$/, { error: 'Choose your country.' }),
+  phone: phoneNumber,
   organizationName: optionalText('the organization name', 200),
-  /** An unchosen `<select>` sends `""`, which becomes `undefined` like any other blank optional field. */
-  organizationType: z
-    .union([z.literal(''), z.enum(ORGANIZATION_TYPES)], { error: 'Choose an organization type.' })
-    .optional()
-    .transform((value) => value || undefined),
-  role: optionalText('your role', 100),
   message: optionalText('the message', 2000),
   sourcePage: optionalText('the source page', 500),
-  consent: z.literal(true, { error: 'Please agree to the privacy policy to continue.' }),
   /** Honeypot: hidden from people, so only bots fill it. A filled one is accepted and dropped. */
   website: z.string().optional(),
 };

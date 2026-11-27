@@ -10,16 +10,11 @@ import { matchOrCreateOrganization } from './organizations';
 import { containsPattern } from './search';
 
 export type PersonIntake = {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
-  phone?: string;
-  city?: string;
-  /** ISO 3166-1 alpha-2 */
-  country: string;
-  role?: string;
+  phone: string;
   organizationId?: string;
-  /** When the visitor ticked the consent checkbox. */
+  /** When the visitor submitted the form, next to its privacy notice. */
   consentAt: Date;
 };
 
@@ -29,20 +24,16 @@ const fillBlank = (column: AnyPgColumn, excluded: string) =>
 
 /**
  * Creates the person, or finds them by (lowercased) email. For an existing person only blank fields are filled in;
- * a value already stored is never overwritten by a form. `consent_at` is set to this submission's consent.
+ * a value already stored (the name included) is never overwritten by a form. `consent_at` is set to this submission.
  * Returns the person's id.
  */
 export async function upsertPerson(tx: Tx, input: PersonIntake): Promise<string> {
   const [person] = await tx
     .insert(people)
     .values({
-      firstName: input.firstName,
-      lastName: input.lastName,
+      name: input.name,
       email: input.email.trim().toLowerCase(),
       phone: input.phone,
-      city: input.city,
-      country: input.country,
-      role: input.role,
       organizationId: input.organizationId,
       consentAt: input.consentAt,
     })
@@ -50,9 +41,6 @@ export async function upsertPerson(tx: Tx, input: PersonIntake): Promise<string>
       target: people.email,
       set: {
         phone: fillBlank(people.phone, 'phone'),
-        city: fillBlank(people.city, 'city'),
-        country: fillBlank(people.country, 'country'),
-        role: fillBlank(people.role, 'role'),
         organizationId: sql`coalesce(${people.organizationId}, excluded.organization_id)`,
         consentAt: sql`excluded.consent_at`,
         updatedAt: new Date(),
@@ -64,7 +52,7 @@ export async function upsertPerson(tx: Tx, input: PersonIntake): Promise<string>
 
 /**
  * The shared first step of every intake: match or create the visitor's organization (when they named one), then
- * upsert the person and link them to it if they had no organization yet.
+ * upsert the person and link them to it if they had no organization yet. `consentAt` is the submission time.
  */
 export async function upsertContact(
   tx: Tx,
@@ -72,22 +60,13 @@ export async function upsertContact(
   consentAt: Date,
 ): Promise<{ personId: string; organizationId: string | undefined }> {
   const organizationId = input.organizationName
-    ? await matchOrCreateOrganization(tx, {
-        name: input.organizationName,
-        type: input.organizationType,
-        city: input.city,
-        country: input.country,
-      })
+    ? await matchOrCreateOrganization(tx, { name: input.organizationName })
     : undefined;
 
   const personId = await upsertPerson(tx, {
-    firstName: input.firstName,
-    lastName: input.lastName,
+    name: input.name,
     email: input.email,
     phone: input.phone,
-    city: input.city,
-    country: input.country,
-    role: input.role,
     organizationId,
     consentAt,
   });
@@ -97,22 +76,20 @@ export async function upsertContact(
 
 export type PersonListRow = {
   id: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   organizationName: string | null;
   country: string | null;
   createdAt: Date;
 };
 
-/** People for the admin list, by last then first name, optionally only those whose name or email contains `query`. */
+/** People for the admin list, by name, optionally only those whose name or email contains `query`. */
 export async function listPeople(query?: string): Promise<PersonListRow[]> {
   const pattern = query ? containsPattern(query) : undefined;
   return getDb()
     .select({
       id: people.id,
-      firstName: people.firstName,
-      lastName: people.lastName,
+      name: people.name,
       email: people.email,
       organizationName: organizations.name,
       country: people.country,
@@ -120,17 +97,8 @@ export async function listPeople(query?: string): Promise<PersonListRow[]> {
     })
     .from(people)
     .leftJoin(organizations, eq(people.organizationId, organizations.id))
-    .where(
-      pattern
-        ? or(
-            ilike(people.firstName, pattern),
-            ilike(people.lastName, pattern),
-            ilike(sql`${people.firstName} || ' ' || ${people.lastName}`, pattern),
-            ilike(people.email, pattern),
-          )
-        : undefined,
-    )
-    .orderBy(asc(people.lastName), asc(people.firstName));
+    .where(pattern ? or(ilike(people.name, pattern), ilike(people.email, pattern)) : undefined)
+    .orderBy(asc(people.name));
 }
 
 export type PersonDetail = {

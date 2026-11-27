@@ -149,7 +149,12 @@ export async function saveOrganization(_prev: ActionState, formData: FormData): 
     const result = await updateOrganization(parsed.data);
     if (result === 'not_found') return NOT_FOUND;
     if (result === 'duplicate') {
-      return fieldError('name', 'Another organization in this country already has this name.');
+      return fieldError(
+        'name',
+        parsed.data.country
+          ? 'Another organization in this country already has this name.'
+          : 'Another organization with no country already has this name.',
+      );
     }
     return savedEverywhere();
   });

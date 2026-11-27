@@ -3,12 +3,12 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { z } from 'zod';
 import { allowSubmission } from '@/server/services/rateLimit';
 
-type IntakeSchema = z.ZodType<{ firstName: string; website?: string }, unknown>;
+type IntakeSchema = z.ZodType<{ name: string; website?: string }, unknown>;
 
 /**
  * The shared request flow of both public intake endpoints, in order: parse JSON with the form's Zod schema (400 with
  * field errors), drop a filled honeypot quietly (200, nothing stored), rate-limit (429), call the service
- * (200 `{ ok: true, firstName }`). Errors are generic; only record ids and error names are logged, never form contents.
+ * (200 `{ ok: true, name }`). Errors are generic; only record ids and error names are logged, never form contents.
  */
 export async function handleIntake<S extends IntakeSchema>(
   request: NextRequest,
@@ -31,7 +31,7 @@ export async function handleIntake<S extends IntakeSchema>(
     );
   }
   const input = parsed.data;
-  const success = NextResponse.json({ ok: true, firstName: input.firstName });
+  const success = NextResponse.json({ ok: true, name: input.name });
 
   if (input.website) return success;
 

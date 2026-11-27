@@ -17,12 +17,13 @@ Only `POST` is exported, so any other method gets `405` from Next.js.
 
 1. Parse the JSON body with the form's Zod schema. Bad JSON: `400 { ok: false, error: 'invalid_json' }`. Invalid
    fields: `400 { ok: false, error: 'invalid_input', fieldErrors: { email: ['…'] } }`.
-2. Honeypot (`website`) filled: `200 { ok: true, firstName }`, the same as a success, and nothing is stored.
+2. Honeypot (`website`) filled: `200 { ok: true, name }`, the same as a success, and nothing is stored.
 3. Rate limit: at most 5 submissions per salted IP hash per 10 minutes, across both endpoints.
    Over it: `429 { ok: false, error: 'rate_limited' }`. The IP is the first `x-forwarded-for` entry, which Vercel
    sets; behind another proxy, make sure that header can't be set by the client.
 4. Call the service, which writes everything in one transaction.
-   Success: `200 { ok: true, firstName }`. Any failure: `500 { ok: false, error: 'server_error' }`.
+   Success: `200 { ok: true, name }`. Any failure: `500 { ok: false, error: 'server_error' }`. The Person's
+   `consent_at` is the submission time.
 
 Logs carry record ids (`leadId`, `caseId`, `personId`, `organizationId`) and error names or Postgres codes only,
 never form contents or database messages.
@@ -31,5 +32,10 @@ never form contents or database messages.
 
 ```bash
 curl -s -XPOST localhost:3000/api/intake/lead -H 'content-type: application/json' \
-  -d '{"firstName":"Ana","lastName":"Silva","email":"ana@example.org","country":"BR","consent":true}'
+  -d '{"name":"Ana Silva","email":"ana@example.org","phone":"+55 81 99999-0000"}'
+curl -s -XPOST localhost:3000/api/intake/case -H 'content-type: application/json' \
+  -d '{"name":"Ana Silva","email":"ana@example.org","phone":"+55 81 99999-0000","message":"How much does it cost?"}'
 ```
+
+Name, email and phone are required on both; a case also needs a message. `organizationName`, `message` (lead),
+`subject` (case) and `sourcePage` are optional.

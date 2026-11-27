@@ -61,7 +61,7 @@ export default async function OpportunityPage({ params }: { params: { id: string
                   lead && (
                     <span className="flex flex-wrap items-center gap-2">
                       <Link href={`/admin/leads/${lead.id}`} className={link}>
-                        {lead.firstName} {lead.lastName}
+                        {lead.name}
                       </Link>
                       <StatusBadge status={lead.status} />
                     </span>

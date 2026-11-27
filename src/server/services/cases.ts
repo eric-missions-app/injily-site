@@ -45,8 +45,7 @@ export async function createCase(input: CaseInput): Promise<CreatedCase> {
 
 export type CaseListRow = {
   id: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   organizationName: string | null;
   country: string | null;
   status: CaseStatus;
@@ -59,8 +58,7 @@ export async function listCases(status?: CaseStatus): Promise<CaseListRow[]> {
   return getDb()
     .select({
       id: serviceCases.id,
-      firstName: people.firstName,
-      lastName: people.lastName,
+      name: people.name,
       organizationName: organizations.name,
       // The person's country, else their organization's.
       country: people.country,

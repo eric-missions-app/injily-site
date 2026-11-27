@@ -63,7 +63,7 @@ export default async function OrganizationsPage({ searchParams }: { searchParams
                 </td>
                 <td className="px-4 py-3">{statusLabel(organization.type)}</td>
                 <td className="px-4 py-3">{organization.city ?? '—'}</td>
-                <td className="px-4 py-3">{organization.country}</td>
+                <td className="px-4 py-3">{organization.country ?? '—'}</td>
               </tr>
             ))}
           </tbody>

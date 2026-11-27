@@ -25,7 +25,6 @@ export async function createLead(input: LeadInput): Promise<CreatedLead> {
         personId,
         organizationId,
         sourcePage: input.sourcePage,
-        interest: input.interest,
         message: input.message,
         status: 'new',
       })
@@ -47,8 +46,7 @@ export async function createLead(input: LeadInput): Promise<CreatedLead> {
 
 export type LeadListRow = {
   id: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   organizationName: string | null;
   country: string | null;
   status: LeadStatus;
@@ -61,8 +59,7 @@ export async function listLeads(status?: LeadStatus): Promise<LeadListRow[]> {
   return getDb()
     .select({
       id: leads.id,
-      firstName: people.firstName,
-      lastName: people.lastName,
+      name: people.name,
       organizationName: organizations.name,
       // The person's country, else the organization's.
       country: people.country,

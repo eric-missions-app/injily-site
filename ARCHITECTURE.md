@@ -107,8 +107,8 @@ Keep it basic. Every table has `id` (uuid), `createdAt` and `updatedAt`.
 
 | Table | Fields |
 |---|---|
-| `people` | firstName, lastName, email (unique, lowercased), phone, city, country (ISO 3166 alpha-2), role, organizationId |
-| `organizations` | name, type (`church`, `ministry`, `mission_team`, `other`), city, country, website |
+| `people` | name (one field), email (unique, lowercased), phone (nullable: the admin may add people without one), city, country (ISO 3166 alpha-2), role, organizationId, consentAt |
+| `organizations` | name, type (`church`, `ministry`, `mission_team`, `other`), city, country (optional, ISO 3166 alpha-2), website |
 | `leads` | personId, organizationId, sourcePage, interest, message, status (`new`, `contacted`, `qualified`, `converted`, `closed`), ownerEmail |
 | `service_cases` | personId, subject, message, status (`open`, `in_progress`, `resolved`), ownerEmail |
 | `opportunities` | organizationId, leadId, name, stage (`discovery`, `onboarding`, `active`, `lost`), expectedStart, notes |
@@ -116,16 +116,20 @@ Keep it basic. Every table has `id` (uuid), `createdAt` and `updatedAt`.
 | `submissions` | kind (`lead`, `case`), ipHash, createdAt (for rate limiting) |
 | `verification_tokens` | identifier (email), token (hashed), expires: admin magic links, deleted once used |
 
-- Intake deduplicates: a Person is matched by email, an Organization by name and country (case-insensitive).
-  An existing Person's blank fields get filled in, and filled ones are never overwritten by a form.
+- Intake deduplicates: a Person is matched by email, an Organization by name (case-insensitive) and country, where
+  "no country" counts as one value (unique index on `lower(name)`, `coalesce(country, '')`). The forms don't ask for
+  a country, so an organization named on a form matches an existing one with the same name and no country.
+  An existing Person's blank fields get filled in, and filled ones (the name included) are never overwritten by a form.
 - Every status or owner change writes an `activities` row.
 - Change the schema only in `src/server/db/schema.ts`, then `npm run db:generate`. Commit the migration with the
   change. Never edit an applied migration.
 
 ## Intake: forms to records
 
-1. The visitor fills `LeadForm` or `CaseForm`. Required fields: first name, last name, email, country, and the consent
-   checkbox (linked to `/privacy`). Phone, city, organization, role and message are optional.
+1. The visitor fills `LeadForm` or `CaseForm`. Required fields: name (one field), email and phone. Organization and
+   message are optional, except that the Service Case form requires the message (its subject is optional). There's no
+   consent checkbox: a privacy notice (linked to `/privacy`) sits next to the button, and the submission time is
+   stored as the Person's `consentAt`.
 2. The form validates with the same Zod schema the server uses, then POSTs JSON.
 3. The route handler re-validates and drops the request quietly (returning 200) if the hidden honeypot field is
    filled. It rate-limits to 5 submissions per IP hash per 10 minutes (429), then calls the service.
@@ -133,7 +137,7 @@ Keep it basic. Every table has `id` (uuid), `createdAt` and `updatedAt`.
    an activity.
 5. After commit, it emails the team inbox (`TEAM_INBOX`) with a link to the record in `/admin`. It also sends the
    visitor a confirmation. An email failure is logged and never fails the submission.
-6. The form is replaced with: **"Thanks, {first name}. Someone from our team will follow up shortly."**
+6. The form is replaced with: **"Thanks, {first word of name}. Someone from our team will follow up shortly."**
 
 Errors are shown next to the field (validation) or as one line above the button (anything else). Never show a stack
 trace or a database message.
@@ -176,7 +180,8 @@ Site-wide metadata (title template, description, OG, Twitter card, favicon) is s
 
 ## Privacy and security
 
-- Collect only the fields above. The consent checkbox is required, and its timestamp is stored with the Person.
+- Collect only the fields above. The forms show a privacy notice by the button, and the submission time is stored
+  with the Person as `consentAt`.
 - Store a salted hash of the IP (`IP_HASH_SALT`), never the raw IP.
 - Secrets live only in server environment variables, never in `NEXT_PUBLIC_*`, never in client code, and never
   committed. `.env.example` lists every variable with a placeholder.

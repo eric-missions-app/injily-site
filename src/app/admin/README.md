@@ -16,10 +16,10 @@ anyone else to sign-in (`/api/auth/signin`), and the layout, every page and ever
 | `leads/[id]/page.tsx` | One Lead: the request (interest, source page, message), the person, the organization, the status picker, owner, a note box and the timeline. A `qualified` lead without an opportunity gets a "Convert to opportunity" button; a converted lead links to its opportunity. |
 | `cases/page.tsx` | Service Cases, the same list as Leads. |
 | `cases/[id]/page.tsx` | One Service Case: subject and message, the person and their organization, status, owner, notes and the timeline. |
-| `people/page.tsx` | People, by last name: name, email, organization, country. `?q=` searches first name, last name, full name and email (case-insensitive, contains). |
-| `people/[id]/page.tsx` | One Person: the edit form (name, email, phone, city, country, role, organization) and their leads and cases. |
-| `organizations/page.tsx` | Organizations, by name: name, type, city, country. `?q=` searches the name. |
-| `organizations/[id]/page.tsx` | One Organization: the edit form (name, type, city, country, website) and its people, leads and opportunities. |
+| `people/page.tsx` | People, by name: name, email, organization, country. `?q=` searches the name and email (case-insensitive, contains). |
+| `people/[id]/page.tsx` | One Person: the edit form (one name field, email, phone, city, country, role, organization; only name and email required) and their leads and cases. |
+| `organizations/page.tsx` | Organizations, by name: name, type, city, country (`—` when none). `?q=` searches the name. |
+| `organizations/[id]/page.tsx` | One Organization: the edit form (name, type, city, optional country, website) and its people, leads and opportunities. |
 | `opportunities/page.tsx` | Opportunities, newest first: name, organization, stage, expected start, created. `?stage=` filters; an unknown value shows all. |
 | `opportunities/[id]/page.tsx` | One Opportunity: its organization and lead, the edit form (name, stage, expected start, notes) and the timeline. |
 

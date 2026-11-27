@@ -1,4 +1,5 @@
 import 'server-only';
+import { firstWord } from '@/lib/format';
 import { escapeHtml, htmlDocument, rowsHtml, rowsText, type IntakeRecord, type RenderedEmail, type Row } from './shared';
 
 /** The longest a visitor-supplied value gets in the confirmation. */
@@ -18,12 +19,11 @@ function excerpt(value: string | undefined): string | undefined {
  */
 export function visitorConfirmation(record: IntakeRecord): RenderedEmail {
   const { input } = record;
-  const thanks = `Thanks, ${excerpt(input.firstName)}. We got your message and someone from our team will follow up shortly.`;
+  const thanks = `Thanks, ${excerpt(firstWord(input.name))}. We got your message and someone from our team will follow up shortly.`;
 
   const rows: Row[] = [
     ...(record.kind === 'case' ? [['Subject', excerpt(record.input.subject)] as Row] : []),
     ['Organization', excerpt(input.organizationName)],
-    ...(record.kind === 'lead' ? [['Interest', excerpt(record.input.interest)] as Row] : []),
   ];
   const hasSummary = rows.some(([, value]) => value);
 
