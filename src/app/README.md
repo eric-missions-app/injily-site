@@ -10,6 +10,7 @@ is an API endpoint, and there's no router config anywhere.
 | `layout.tsx` | The root HTML shell for every page. It loads Manrope through `next/font/google` (self-hosted, exposed as `--font-manrope`), links the Material Symbols icon font, and sets site-wide `metadata` (title template `%s \| injily`, description). It also renders `SourcePageTracker` (from `components/forms/`), which records the previous page so a lead's `sourcePage` survives client-side navigation. |
 | `globals.css` | Tailwind's directives plus the **color tokens**: CSS variables under `:root` (light) and `.dark` (dark). This is the only place a color value is written. |
 | `page.tsx` | The homepage (`/`): `Header`, then `Hero`, `WhyItMatters`, `Features`, `HowItWorks`, `Audiences`, `FaqPreview` and `CTA` inside `<main className="pt-20">`, then `Footer`. Section backgrounds alternate `bg-background` / `bg-background-light` from the Hero down. |
+| `product/convert-tracking/page.tsx`, `product/follow-up/page.tsx` | Product pages (`/product/<slug>`), linked from the Product dropdown, the Footer and the homepage "Learn more" links. Static. See [product/README.md](product/README.md). |
 | `privacy/page.tsx` | The privacy policy (`/privacy`). Static. Read [privacy/README.md](privacy/README.md) before editing it. |
 | `get-started/page.tsx` | "Get early access" (`/get-started`), where every CTA button lands: what happens next and `LeadForm`. Static, no CTA card. See [get-started/README.md](get-started/README.md). |
 | `contact/page.tsx` | "Contact us" (`/contact`): `CaseForm`. Static, no CTA card. See [contact/README.md](contact/README.md). |
@@ -21,7 +22,7 @@ is an API endpoint, and there's no router config anywhere.
 
 ```
 app/
-  product/<slug>/page.tsx       J-8, J-9   convert-tracking, follow-up, mentoring, missions, insights
+  product/<slug>/page.tsx       J-9        mentoring, missions, insights
   use-cases/<slug>/page.tsx     J-10       churches, evangelists, mission-teams
   faq/page.tsx                  J-10
   sitemap.ts, robots.ts         J-13
