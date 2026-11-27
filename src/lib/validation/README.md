@@ -9,8 +9,8 @@ together with its inferred type.
 | File | Exports | Used by |
 |---|---|---|
 | `shared.ts` | `contactFields`, `requiredText`, `optionalText`, `ORGANIZATION_TYPES` | `lead.ts` and `case.ts` |
-| `lead.ts` | `leadInput`, `LeadInput` | `LeadForm` (J-11) and `POST /api/intake/lead` |
-| `case.ts` | `caseInput`, `CaseInput` | `CaseForm` (J-11) and `POST /api/intake/case` |
+| `lead.ts` | `leadInput`, `LeadInput` | `LeadForm` and `POST /api/intake/lead` |
+| `case.ts` | `caseInput`, `CaseInput` | `CaseForm` and `POST /api/intake/case` |
 | `admin.ts` | `statusChangeInput`, `ownerChangeInput`, `noteInput`, `personEditInput`, `organizationEditInput`, `opportunityEditInput`, `convertLeadInput`, `leadStatusFilter`, `caseStatusFilter`, `opportunityStageFilter`, `searchQuery`, `LEAD_STATUSES`, `CASE_STATUSES`, `ORGANIZATION_TYPES`, `OPPORTUNITY_STAGES` | the admin Server Actions and pages |
 
 ## The intake fields

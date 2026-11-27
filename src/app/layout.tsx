@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Manrope } from 'next/font/google';
+import SourcePageTracker from '@/components/forms/SourcePageTracker';
 import './globals.css';
 
 const manrope = Manrope({
@@ -31,7 +32,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=arrow_forward,calendar_month,campaign,church,close,diversity_3,expand_more,groups,insights,menu,person_add,person_search,public,sticky_note_2,task_alt,visibility_off&display=block"
         />
       </head>
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        <SourcePageTracker />
+        {children}
+      </body>
     </html>
   );
 }
