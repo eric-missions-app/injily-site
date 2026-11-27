@@ -24,7 +24,7 @@ const AUDIENCES = [
 
 export default function Audiences() {
   return (
-    <section className="bg-background">
+    <section id="audiences" className="scroll-mt-20 bg-background">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <FadeIn className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-extrabold tracking-tight text-text sm:text-4xl">Who it&apos;s for</h2>

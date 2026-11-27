@@ -15,11 +15,13 @@ forms are in [`forms/`](forms/README.md).
 | `Features.tsx` | no | Homepage `#features`: "Everything your ministry needs" and six feature cards, each with an icon and a "Learn more" link to its product page. The card copy matches injily.com word for word; keep it that way. |
 | `FadeIn.tsx` | yes | The one client wrapper for entrance motion: fades and lifts its children in once, when they scroll into view (Framer Motion, honors reduced motion). The server HTML is visible; after mount it hides only blocks still below the screen, so nothing depends on JavaScript to show. Static sections wrap their content in it and stay server components. Don't use it above the fold. |
 | `HowItWorks.tsx` | no | Homepage `#how-it-works` (the Hero's "See how it works" target): "How it works", the numbered steps 01 Register a convert, 02 Assign & schedule, 03 Track & grow, and the discipleship pipeline as three stages: New believer, Growing, Mature. |
-| `Audiences.tsx` | no | Homepage "Who it's for": three cards (Churches & pastors, Evangelists & missioners, Mission & outreach teams), one line each. The whole card links to its `/use-cases/<slug>` page. |
-| `FaqPreview.tsx` | yes | Homepage FAQ: an accordion of the first four entries from `@/content/faq` (one open at a time; real buttons with `aria-expanded`, so Tab and Enter work) and a "See all questions" link to `/faq`. Answers are in the server HTML, hidden until opened. |
+| `Audiences.tsx` | no | Homepage `#audiences` (the use-case pages' breadcrumb target), "Who it's for": three cards (Churches & pastors, Evangelists & missioners, Mission & outreach teams), one line each. The whole card links to its `/use-cases/<slug>` page. |
+| `FaqPreview.tsx` | no | Homepage FAQ: `FaqAccordion` with the first four entries from `@/content/faq` and a "See all questions" link to `/faq`. |
+| `FaqAccordion.tsx` | yes | The FAQ accordion used by `FaqPreview` and `/faq`: the `entries` it's given, one open at a time, questions as the given `headingLevel` (`h3` under a section's `h2`, `h2` under a page's `h1`). Real buttons with `aria-expanded`, so Tab and Enter work. Answers are in the server HTML, hidden until opened. |
 | `CTA.tsx` | no | The dark `bg-primary-darker` card every marketing page ends with (not `/get-started`, `/contact` or `/privacy`): "Ready to strengthen your church's follow-up?", "Make disciples, not just decisions." and one `CTA_LABEL` button to `CTA_HREF`. No props: put `<CTA />` after the page's last section. |
 | `ProductHero.tsx` | no | The opening section of a product or use-case page (`bg-background`): a breadcrumb (`parent` link, then `name` as the current page, e.g. "Product / Convert tracking"), the `title` (the page's `h1`), the `subtitle`, and a `visual` beside them from `lg`. The visual is any static, token-styled markup the page passes in; it's read as one image described by `visualLabel`. No entrance motion: it's above the fold. |
 | `ProductFeatures.tsx` | no | A product or use-case page's grid of 3–6 `points` (Material Symbols icon, title, body) under a `title` and optional `subtitle`, on `bg-background-light`. Four points lay out two by two, other counts three across from `lg`. |
+| `UseCaseSection.tsx` | no | One section of a use-case page, on `bg-background` or `bg-background-light` (`tone`): an icon, `title` (`h2`) and `body`, "More about <product>" links to the `/product` pages in `links`, and a checklist of `points` beside them from `lg`. |
 
 ## Coming next
 
@@ -27,7 +29,6 @@ forms are in [`forms/`](forms/README.md).
 |---|---|---|
 | `forms/LeadForm`, `forms/CaseForm` | J-11 | client components that POST to `/api/intake/*` |
 | `admin/*` | J-5 | more admin components for People, Organizations and Opportunities |
-| `ProductHero`, `ProductFeatures` | J-8 | shared by the 5 product and 3 use-case pages |
 
 ## Rules
 

@@ -7,7 +7,7 @@ words live here so they're written once.
 
 | File | What it holds |
 |---|---|
-| `faq.ts` | `FAQ`, every FAQ entry (`{ question, answer }`) in display order, and the `FaqEntry` type. The homepage `FaqPreview` shows the first four; `/faq` (J-10) shows them all. |
+| `faq.ts` | `FAQ`, every FAQ entry (`{ question, answer }`) in display order, and the `FaqEntry` type. The homepage `FaqPreview` shows the first four; `/faq` shows them all. |
 | `countries.ts` | `COUNTRIES`, every ISO 3166-1 alpha-2 country as `{ code, name }` sorted by English name, and the `Country` type. The intake forms' country select lists them and sends the code. |
 
 ## Rules
