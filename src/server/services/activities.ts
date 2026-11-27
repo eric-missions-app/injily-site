@@ -1,13 +1,13 @@
 import 'server-only';
 import { and, desc, eq } from 'drizzle-orm';
-import type { AdminRecordType, NoteInput } from '@/lib/validation/admin';
+import type { NoteInput } from '@/lib/validation/admin';
 import { getDb } from '@/server/db/client';
 import { activities, leads, serviceCases } from '@/server/db/schema';
 
 export type Activity = typeof activities.$inferSelect;
 
 /** A record's timeline, newest first. */
-export async function listActivities(recordType: AdminRecordType, recordId: string): Promise<Activity[]> {
+export async function listActivities(recordType: Activity['recordType'], recordId: string): Promise<Activity[]> {
   return getDb()
     .select()
     .from(activities)

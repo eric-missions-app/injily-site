@@ -24,7 +24,6 @@ forms are in [`forms/`](forms/README.md).
 | Component | Ticket | Notes |
 |---|---|---|
 | `ProductHero`, `ProductFeatures` | J-8 | shared by the 5 product and 3 use-case pages |
-| `admin/*` | J-5 | more admin components for People, Organizations and Opportunities |
 
 ## Rules
 

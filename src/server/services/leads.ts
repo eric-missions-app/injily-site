@@ -1,9 +1,9 @@
 import 'server-only';
 import { desc, eq } from 'drizzle-orm';
-import type { LeadStatus } from '@/lib/validation/admin';
+import type { LeadStatus, OpportunityStage } from '@/lib/validation/admin';
 import type { LeadInput } from '@/lib/validation/lead';
 import { getDb } from '@/server/db/client';
-import { activities, leads, organizations, people } from '@/server/db/schema';
+import { activities, leads, opportunities, organizations, people } from '@/server/db/schema';
 import { listActivities, ownerChangeBody, type Activity } from './activities';
 import { upsertContact } from './people';
 
@@ -80,10 +80,12 @@ export type LeadDetail = {
   lead: typeof leads.$inferSelect;
   person: typeof people.$inferSelect;
   organization: typeof organizations.$inferSelect | null;
+  /** The opportunity this lead was converted into, if any. */
+  opportunities: { id: string; name: string; stage: OpportunityStage }[];
   activities: Activity[];
 };
 
-/** One Lead with its person, organization and timeline, or null if it doesn't exist. */
+/** One Lead with its person, organization, opportunity and timeline, or null if it doesn't exist. */
 export async function getLead(id: string): Promise<LeadDetail | null> {
   const [row] = await getDb()
     .select({ lead: leads, person: people, organization: organizations })
@@ -92,15 +94,27 @@ export async function getLead(id: string): Promise<LeadDetail | null> {
     .leftJoin(organizations, eq(leads.organizationId, organizations.id))
     .where(eq(leads.id, id));
   if (!row) return null;
-  return { ...row, activities: await listActivities('lead', id) };
+  const [leadOpportunities, timeline] = await Promise.all([
+    getDb()
+      .select({ id: opportunities.id, name: opportunities.name, stage: opportunities.stage })
+      .from(opportunities)
+      .where(eq(opportunities.leadId, id))
+      .orderBy(desc(opportunities.createdAt)),
+    listActivities('lead', id),
+  ]);
+  return { ...row, opportunities: leadOpportunities, activities: timeline };
 }
 
-/** Sets a Lead's status and records the change on its timeline. Setting the current status changes nothing. */
+/**
+ * Sets a Lead's status and records the change on its timeline. Setting the current status changes nothing. A change
+ * to `converted` is refused with `'use_convert'`: only `convertLeadToOpportunity` makes it, together with the
+ * opportunity.
+ */
 export async function setLeadStatus(
   id: string,
   status: LeadStatus,
   actorEmail: string,
-): Promise<'ok' | 'not_found'> {
+): Promise<'ok' | 'not_found' | 'use_convert'> {
   return getDb().transaction(async (tx) => {
     const [current] = await tx
       .select({ status: leads.status })
@@ -109,6 +123,7 @@ export async function setLeadStatus(
       .for('update');
     if (!current) return 'not_found';
     if (current.status === status) return 'ok';
+    if (status === 'converted') return 'use_convert';
 
     await tx.update(leads).set({ status }).where(eq(leads.id, id));
     await tx.insert(activities).values({

@@ -15,7 +15,7 @@ is an API endpoint, and there's no router config anywhere.
 | `contact/page.tsx` | "Contact us" (`/contact`): `CaseForm`. Static, no CTA card. See [contact/README.md](contact/README.md). |
 | `api/intake/lead/route.ts`, `api/intake/case/route.ts` | The only public endpoints: `POST` a lead or a service case. See [api/README.md](api/README.md) and [api/intake/README.md](api/intake/README.md). |
 | `api/auth/[...nextauth]/route.ts` | Auth.js for admin sign-in. See [api/README.md](api/README.md). |
-| `admin/` | The signed-in CRM: Leads and Service Cases (list and detail) and their Server Actions. See [admin/README.md](admin/README.md). |
+| `admin/` | The signed-in CRM: Leads, Service Cases, People, Organizations and Opportunities (list and detail) and their Server Actions. See [admin/README.md](admin/README.md). |
 
 ## What's coming, by ticket
 
@@ -26,7 +26,6 @@ app/
   faq/page.tsx                  J-10
   sitemap.ts, robots.ts         J-13
   not-found.tsx                 J-13
-  admin/people|organizations|opportunities/  J-5   more CRM screens
 ```
 
 ## Rules for pages here
