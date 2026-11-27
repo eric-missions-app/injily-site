@@ -44,3 +44,6 @@ is an API endpoint, and there's no router config anywhere.
 2. If it belongs in the nav, add it to `src/lib/site.ts`; the Header, mobile menu and Footer all read from there.
    Product and use-case pages reach the sitemap through the nav; any other page needs adding to `sitemap.ts`.
 3. Run `npm run build` and check the new route shows as static.
+
+`_fonts/` holds Manrope 700 and 800 (SIL Open Font License, from Fontsource) for `opengraph-image.tsx`. The image
+renderer can't use `next/font` or variable fonts, so it reads these static files at build time.

@@ -22,8 +22,22 @@ async function loadPalette() {
   };
 }
 
+// Manrope (SIL Open Font License), the site's font, as static weights: the image renderer can't use next/font or
+// variable fonts. Files in src/app/_fonts/ (the leading underscore keeps the folder out of routing).
+async function loadFonts() {
+  const dir = join(process.cwd(), 'src/app/_fonts');
+  const [bold, extraBold] = await Promise.all([
+    readFile(join(dir, 'manrope-latin-700.woff')),
+    readFile(join(dir, 'manrope-latin-800.woff')),
+  ]);
+  return [
+    { name: 'Manrope', data: bold, weight: 700 as const, style: 'normal' as const },
+    { name: 'Manrope', data: extraBold, weight: 800 as const, style: 'normal' as const },
+  ];
+}
+
 export default async function OpengraphImage() {
-  const color = await loadPalette();
+  const [color, fonts] = await Promise.all([loadPalette(), loadFonts()]);
 
   return new ImageResponse(
     (
@@ -37,6 +51,7 @@ export default async function OpengraphImage() {
           padding: 80,
           background: color('primary-darker'),
           color: color('on-primary-darker'),
+          fontFamily: 'Manrope',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', fontSize: 56, fontWeight: 700 }}>
@@ -76,6 +91,6 @@ export default async function OpengraphImage() {
         </div>
       </div>
     ),
-    size,
+    { ...size, fonts },
   );
 }
