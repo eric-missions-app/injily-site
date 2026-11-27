@@ -85,8 +85,8 @@ is a nested folder with its own `page.tsx`. There's no router config.
   section when its layout differs. Extract a shared component only once a section's *structure* (not just its copy)
   repeats 3 or more times.
 - Sub-pages open with a breadcrumb (`Product / Mentoring`) back to their parent.
-- Every page ends with the dark `bg-primary-darker` CTA card with one primary button. The button's label and target
-  come from `src/lib/site.ts`.
+- Every page ends with the dark `bg-primary-darker` CTA card with one primary button, except `/get-started` and
+  `/contact`, where the form is the call to action. The button's label and target come from `src/lib/site.ts`.
 - Forms are the only interactive part of a marketing page: `src/components/forms/*` are client components that POST
   JSON to `/api/intake/*`. The page around them stays static.
 

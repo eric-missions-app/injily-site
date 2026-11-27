@@ -14,10 +14,10 @@ All the application code. This one Next.js app serves two halves with different 
 | Folder | What's in it | Read more |
 |---|---|---|
 | `app/` | routes: one folder per URL, plus the root layout and global CSS | [app/README.md](app/README.md) |
-| `components/` | React components for the marketing pages; `admin/` and `forms/` subfolders later | [components/README.md](components/README.md) |
+| `components/` | React components for the marketing pages; `admin/` holds admin components and `forms/` the intake forms | [components/README.md](components/README.md) |
 | `lib/` | site config (nav, CTA) and the Zod schemas in `lib/validation/` | [lib/README.md](lib/README.md) |
 | `server/` | server-only code: the database, services, email, auth | [server/README.md](server/README.md) |
-| `content/` | copy kept as data: the FAQ entries | [content/README.md](content/README.md) |
+| `content/` | copy kept as data: the FAQ entries and the forms' country list | [content/README.md](content/README.md) |
 | `middleware.ts` | protects `/admin/*`: no session for an `ADMIN_EMAILS` address means a redirect to sign-in. It uses the Edge-safe `server/auth.config.ts`. | [server/README.md](server/README.md) |
 
 ## How data flows

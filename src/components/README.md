@@ -1,7 +1,7 @@
 # src/components/
 
 React components for the marketing pages. Admin-only components are in [`admin/`](admin/README.md), and the two
-forms go in `forms/` (J-11).
+forms are in [`forms/`](forms/README.md).
 
 ## What's here now
 
@@ -27,6 +27,7 @@ forms go in `forms/` (J-11).
 |---|---|---|
 | `forms/LeadForm`, `forms/CaseForm` | J-11 | client components that POST to `/api/intake/*` |
 | `admin/*` | J-5 | more admin components for People, Organizations and Opportunities |
+| `ProductHero`, `ProductFeatures` | J-8 | shared by the 5 product and 3 use-case pages |
 
 ## Rules
 

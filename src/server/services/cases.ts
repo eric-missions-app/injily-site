@@ -5,16 +5,18 @@ import type { CaseInput } from '@/lib/validation/case';
 import { getDb } from '@/server/db/client';
 import { activities, organizations, people, serviceCases } from '@/server/db/schema';
 import { listActivities, ownerChangeBody, type Activity } from './activities';
+import { sendIntakeEmails } from './intakeEmails';
 import { upsertContact } from './people';
 
 export type CreatedCase = { caseId: string; personId: string; organizationId: string | undefined };
 
 /**
  * Intake for the contact form. In one transaction: upserts the person and organization, creates the service case
- * (status `open`) and writes its first activity. `input` must already be parsed with `caseInput`.
+ * (status `open`) and writes its first activity. After it commits, emails the team and the visitor (a failure there is
+ * logged, never thrown). `input` must already be parsed with `caseInput`.
  */
 export async function createCase(input: CaseInput): Promise<CreatedCase> {
-  return getDb().transaction(async (tx) => {
+  const created = await getDb().transaction(async (tx) => {
     const { personId, organizationId } = await upsertContact(tx, input, new Date());
 
     const [serviceCase] = await tx
@@ -36,6 +38,9 @@ export async function createCase(input: CaseInput): Promise<CreatedCase> {
 
     return { caseId: serviceCase.id, personId, organizationId };
   });
+
+  await sendIntakeEmails({ kind: 'case', id: created.caseId, input });
+  return created;
 }
 
 export type CaseListRow = {
