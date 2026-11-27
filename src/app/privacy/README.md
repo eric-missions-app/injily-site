@@ -1,6 +1,6 @@
 # src/app/privacy/
 
-The privacy policy, at `/privacy`. The Footer's Privacy link points here, and so will the forms' consent checkbox.
+The privacy policy, at `/privacy`. The Footer's Privacy link points here, and so does the forms' consent checkbox.
 
 ## What's here now
 
