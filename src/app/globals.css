@@ -11,6 +11,7 @@
   --color-primary-hover: 67 56 202;
   --color-on-primary: 255 255 255;
   --color-primary-darker: 49 46 129;
+  --color-on-primary-darker: 255 255 255;
   --color-background: 255 255 255;
   --color-background-light: 246 247 251;
   --color-surface: 255 255 255;
@@ -28,6 +29,8 @@
   --color-primary-hover: 165 180 252;
   --color-on-primary: 11 13 23;
   --color-primary-darker: 30 27 75;
+  /* Light text on the dark CTA card in both themes (on-primary turns dark in dark mode). */
+  --color-on-primary-darker: 241 243 249;
   --color-background: 11 13 23;
   --color-background-light: 18 21 35;
   --color-surface: 24 28 45;

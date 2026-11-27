@@ -14,12 +14,15 @@ forms go in `forms/` (J-11).
 | `WhyItMatters.tsx` | no | Homepage section on why follow-up matters: what happens after a decision, then three points (nobody knows who's responsible, notes live on phones and paper, leaders can't see who's slipping). No statistics or numbers. |
 | `Features.tsx` | no | Homepage `#features`: "Everything your ministry needs" and six feature cards, each with an icon and a "Learn more" link to its product page. The card copy matches injily.com word for word; keep it that way. |
 | `FadeIn.tsx` | yes | The one client wrapper for entrance motion: fades and lifts its children in once, when they scroll into view (Framer Motion, honors reduced motion). The server HTML is visible; after mount it hides only blocks still below the screen, so nothing depends on JavaScript to show. Static sections wrap their content in it and stay server components. Don't use it above the fold. |
+| `HowItWorks.tsx` | no | Homepage `#how-it-works` (the Hero's "See how it works" target): "How it works", the numbered steps 01 Register a convert, 02 Assign & schedule, 03 Track & grow, and the discipleship pipeline as three stages: New believer, Growing, Mature. |
+| `Audiences.tsx` | no | Homepage "Who it's for": three cards (Churches & pastors, Evangelists & missioners, Mission & outreach teams), one line each. The whole card links to its `/use-cases/<slug>` page. |
+| `FaqPreview.tsx` | yes | Homepage FAQ: an accordion of the first four entries from `@/content/faq` (one open at a time; real buttons with `aria-expanded`, so Tab and Enter work) and a "See all questions" link to `/faq`. Answers are in the server HTML, hidden until opened. |
+| `CTA.tsx` | no | The dark `bg-primary-darker` card every marketing page ends with (not `/get-started`, `/contact` or `/privacy`): "Ready to strengthen your church's follow-up?", "Make disciples, not just decisions." and one `CTA_LABEL` button to `CTA_HREF`. No props: put `<CTA />` after the page's last section. |
 
 ## Coming next
 
 | Component | Ticket | Notes |
 |---|---|---|
-| `HowItWorks`, `Audiences`, `FaqPreview`, `CTA` | J-7 | `CTA` is the dark `bg-primary-darker` card every page ends with |
 | `ProductHero`, `ProductFeatures` | J-8 | shared by the 5 product and 3 use-case pages |
 | `forms/LeadForm`, `forms/CaseForm` | J-11 | client components that POST to `/api/intake/*` |
 
@@ -33,8 +36,10 @@ forms go in `forms/` (J-11).
   server component.
 - **Colors only through tokens:** `bg-primary`, `text-text`, `text-muted`, `border-border`, `bg-surface`, and so on.
   Never write hex, `rgb()`, or Tailwind palette classes like `bg-indigo-600`. For text on a primary background, use
-  `text-on-primary`, and use `hover:bg-primary-hover` for hover. Both pass WCAG AA in light and dark.
-- **Focus is always visible:** interactive elements use `focus-visible:ring-2 focus-visible:ring-primary`.
+  `text-on-primary`, and use `hover:bg-primary-hover` for hover. Both pass WCAG AA in light and dark. On the dark `bg-primary-darker` card,
+  text uses `text-on-primary-darker`, which stays light in both themes.
+- **Focus is always visible:** interactive elements use `focus-visible:ring-2 focus-visible:ring-primary` (on the
+  dark CTA card, `focus-visible:ring-on-primary-darker`, so the ring shows against it).
 - **Icons:** `<span aria-hidden="true" className="material-symbols-outlined">name</span>`. The font only serves the
   glyphs listed in `icon_names` in `src/app/layout.tsx`, so **add every new icon name there** (alphabetical), or it
   shows up as the word.

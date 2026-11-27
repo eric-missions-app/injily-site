@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ORGANIZATION_TYPES } from './shared';
 
 /** Lead and Service Case statuses, in workflow order. Must match the enums in src/server/db/schema.ts. */
 export const LEAD_STATUSES = ['new', 'contacted', 'qualified', 'converted', 'closed'] as const;
@@ -44,8 +45,10 @@ export type NoteInput = z.infer<typeof noteInput>;
 export const leadStatusFilter = z.enum(LEAD_STATUSES).optional().catch(undefined);
 export const caseStatusFilter = z.enum(CASE_STATUSES).optional().catch(undefined);
 
-/** Organization types and Opportunity stages. Must match the enums in src/server/db/schema.ts. */
-export const ORGANIZATION_TYPES = ['church', 'ministry', 'mission_team', 'other'] as const;
+/** The organization types, defined once for intake and the admin. */
+export { ORGANIZATION_TYPES };
+
+/** Opportunity stages. Must match the enum in src/server/db/schema.ts. */
 export const OPPORTUNITY_STAGES = ['discovery', 'onboarding', 'active', 'lost'] as const;
 
 export type OrganizationType = (typeof ORGANIZATION_TYPES)[number];

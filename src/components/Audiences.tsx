@@ -1,0 +1,64 @@
+import Link from 'next/link';
+import FadeIn from '@/components/FadeIn';
+
+const AUDIENCES = [
+  {
+    icon: 'church',
+    title: 'Churches & pastors',
+    href: '/use-cases/churches',
+    body: 'See every new believer in your congregation and make sure each one is followed up.',
+  },
+  {
+    icon: 'campaign',
+    title: 'Evangelists & missioners',
+    href: '/use-cases/evangelists',
+    body: 'Hand every convert to a local church and know they were welcomed.',
+  },
+  {
+    icon: 'groups',
+    title: 'Mission & outreach teams',
+    href: '/use-cases/mission-teams',
+    body: 'Coordinate follow-up after every outreach, across your team and the churches you serve.',
+  },
+];
+
+export default function Audiences() {
+  return (
+    <section className="bg-background">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+        <FadeIn className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-extrabold tracking-tight text-text sm:text-4xl">Who it&apos;s for</h2>
+          <p className="mt-4 text-lg text-muted">Built for everyone who meets new believers and wants to see them grow.</p>
+        </FadeIn>
+
+        <ul className="mt-12 grid gap-6 md:grid-cols-3">
+          {AUDIENCES.map((audience, index) => (
+            <li key={audience.href}>
+              <FadeIn delay={index * 0.1} className="h-full">
+                <Link
+                  href={audience.href}
+                  className="group flex h-full flex-col rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="material-symbols-outlined flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-2xl text-primary"
+                  >
+                    {audience.icon}
+                  </span>
+                  <h3 className="mt-4 text-lg font-bold text-text">{audience.title}</h3>
+                  <p className="mt-2 flex-1 text-muted">{audience.body}</p>
+                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-primary group-hover:text-primary-hover">
+                    Learn more
+                    <span aria-hidden="true" className="material-symbols-outlined text-lg">
+                      arrow_forward
+                    </span>
+                  </span>
+                </Link>
+              </FadeIn>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
