@@ -1,5 +1,6 @@
-// Applies pending drizzle/ migrations on production deploys. `npm run vercel-build` runs it before `next build`;
-// a failed migration exits non-zero, so the build fails and the new code never goes live against an old schema.
+// Applies pending drizzle/ migrations on production deploys. `npm run vercel-build` runs it after `next build`, so
+// a build that fails changes nothing in the database. A failed migration exits non-zero, so the deploy fails and the
+// new code never goes live against an old schema.
 import { existsSync, readFileSync } from 'node:fs';
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-serverless';
@@ -12,6 +13,10 @@ const log = (message) => console.log(`[migrate-on-deploy] ${message}`);
 
 // Decided from the real environment, before any .env file is read.
 const vercelEnv = process.env.VERCEL_ENV;
+if (process.env.VERCEL && !vercelEnv) {
+  log('Failed: running on Vercel but VERCEL_ENV is not set; refusing to guess.');
+  process.exit(1);
+}
 if (vercelEnv !== 'production') {
   log(
     `Skipped: VERCEL_ENV is ${vercelEnv ? `"${vercelEnv}"` : 'not set'}; migrations run only on production deploys. ` +
@@ -30,11 +35,14 @@ if (envFiles.length > 0) {
 }
 
 // Migrations need a direct connection; the pooled one is only the fallback.
-const url = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
+const urlVariable = process.env.DATABASE_URL_UNPOOLED ? 'DATABASE_URL_UNPOOLED' : 'DATABASE_URL';
+const url = process.env[urlVariable];
 if (!url) {
   log('Failed: neither DATABASE_URL_UNPOOLED nor DATABASE_URL is set.');
   process.exit(1);
 }
+// The variable's name only, never its value.
+log(`Connecting with ${urlVariable}`);
 
 /** Removes the connection string and its secret parts from text that could reach the build log. */
 function redact(text) {
@@ -62,6 +70,8 @@ const applied = [];
 let lastQuery = '';
 const logger = {
   logQuery(query, params) {
+    // A failed statement is followed by `rollback`, which must not replace it as the last query.
+    if (/^\s*(begin|commit|rollback)\b/i.test(query)) return;
     lastQuery = query;
     if (/^insert into "drizzle"\."__drizzle_migrations"/.test(query)) applied.push(Number(params[1]));
   },

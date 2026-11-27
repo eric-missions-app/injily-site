@@ -24,9 +24,9 @@ without it. It's for local and Neon-branch databases.
 ## Production
 
 Production is migrated on every production deploy: Vercel's `npm run vercel-build` runs
-[`scripts/migrate-on-deploy.mjs`](../scripts/migrate-on-deploy.mjs) before `next build`. It applies pending
-migrations with drizzle's migrator, over `DATABASE_URL_UNPOOLED` (or `DATABASE_URL` if that's unset), in one
-transaction. If one fails, the build fails naming the file, nothing from that deploy is applied, and the previous
+[`scripts/migrate-on-deploy.mjs`](../scripts/migrate-on-deploy.mjs) after a successful `next build`. It applies
+pending migrations with drizzle's migrator, over `DATABASE_URL_UNPOOLED` (or `DATABASE_URL` if that's unset), in one
+transaction. If one fails, the deploy fails naming the file, nothing from that deploy is applied, and the previous
 deployment stays live. Preview deploys skip it, since they share production's database. So a merged migration
 reaches production with the code that needs it; don't apply it there by hand.
 

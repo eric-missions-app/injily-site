@@ -21,7 +21,7 @@ npm run dev                     # http://localhost:3000, admin at /admin
 | `npm run build` | production build; marketing routes must be static |
 | `npm run db:generate` | generate a migration after changing `src/server/db/schema.ts` |
 | `npm run db:migrate` | apply migrations to a local or Neon-branch database |
-| `npm run vercel-build` | what Vercel runs: migrations (production deploys only), then `next build` |
+| `npm run vercel-build` | what Vercel runs: `next build`, then migrations (production deploys only) |
 
 ## Deploy
 
@@ -29,8 +29,8 @@ Push to GitHub and import the repo into Vercel (Next.js is detected automaticall
 set the variables from `.env.example` in Project Settings → Environment Variables, and attach `injily.com` under
 Domains. Every PR gets a preview deployment.
 
-**Migrations run on every production deploy.** Vercel runs `npm run vercel-build`, which first runs
+**Migrations run on every production deploy.** Vercel runs `npm run vercel-build`, which builds and then runs
 [`scripts/migrate-on-deploy.mjs`](scripts/migrate-on-deploy.mjs): it applies pending migrations from `drizzle/` over
-`DATABASE_URL_UNPOOLED` (falling back to `DATABASE_URL`), then builds. If a migration fails, the build fails and the
-previous deployment stays live. Preview and local builds skip migrations, because previews share production's
-`DATABASE_URL`. Don't run `npm run db:migrate` against production by hand.
+`DATABASE_URL_UNPOOLED` (falling back to `DATABASE_URL`). A failed build never touches the database. If a migration
+fails, the deploy fails and the previous deployment stays live. Preview and local builds skip migrations, because
+previews share production's `DATABASE_URL`. Don't run `npm run db:migrate` against production by hand.

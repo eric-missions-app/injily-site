@@ -4,7 +4,7 @@ Node scripts that run outside the Next.js app, during builds and deploys. They a
 
 | Path | What it is |
 |---|---|
-| `migrate-on-deploy.mjs` | Applies pending `drizzle/` migrations with drizzle's migrator. `npm run vercel-build` runs it before `next build`. It migrates only when `VERCEL_ENV` is `production`; previews and local builds print why they skipped. It connects with `DATABASE_URL_UNPOOLED`, falling back to `DATABASE_URL`. A failed migration exits non-zero, naming the file, so the deploy fails. It never prints the connection string. |
+| `migrate-on-deploy.mjs` | Applies pending `drizzle/` migrations with drizzle's migrator. `npm run vercel-build` runs it after `next build`. It migrates only when `VERCEL_ENV` is `production`; previews and local builds print why they skipped. On Vercel (`VERCEL` set) with no `VERCEL_ENV`, it fails. It connects with `DATABASE_URL_UNPOOLED`, falling back to `DATABASE_URL`, and prints which of the two it used. A failed migration exits non-zero, naming the file, so the deploy fails. It never prints the connection string. |
 
 ## Rules
 
@@ -14,11 +14,13 @@ Node scripts that run outside the Next.js app, during builds and deploys. They a
 
 ## Running `migrate-on-deploy.mjs` by hand
 
-Point `.env.local` at a fresh Neon branch, never at production, then:
+In `.env.local`, point **both `DATABASE_URL` and `DATABASE_URL_UNPOOLED`** at a fresh Neon branch, never at
+production. Changing only `DATABASE_URL` isn't enough: this script uses `DATABASE_URL_UNPOOLED` first (`npm run
+db:migrate` uses only `DATABASE_URL`), and a file from `vercel env pull` can hold production's. Then:
 
 ```bash
 VERCEL_ENV=production node scripts/migrate-on-deploy.mjs
 ```
 
-It reads `.env.local` and `.env` the way `drizzle.config.ts` does. For everyday local migrations, use
-`npm run db:migrate`.
+It reads `.env.local` and `.env` the way `drizzle.config.ts` does, and a variable already set in your shell wins over
+both files. It prints which variable it connected with. For everyday local migrations, use `npm run db:migrate`.

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "vercel-build": "node scripts/migrate-on-deploy.mjs && next build",
+    "vercel-build": "next build && node scripts/migrate-on-deploy.mjs",
     "start": "next start",
     "lint": "next lint",
     "db:generate": "NODE_OPTIONS=--conditions=react-server drizzle-kit generate",
