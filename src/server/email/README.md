@@ -7,7 +7,7 @@ Only `src/server/services/` calls into it.
 
 | File / folder | What it holds |
 |---|---|
-| `client.ts` | `sendEmail(email, recordId)`: sends one email through Resend with `RESEND_API_KEY`, from `EMAIL_FROM`, and returns whether it was sent. It never throws. Without a key (local dev) it sends nothing and logs `email skipped` with the record id. A failure is logged as `email failed` with the record id and Resend's error name, and returns false. |
+| `client.ts` | `sendEmail(email, recordId)`: sends one email through Resend with `RESEND_API_KEY`, from `EMAIL_FROM`, and returns whether it was sent. It never throws. A request still unanswered after 5 seconds is aborted and logged as `email failed` with `timeout`. Without a key (local dev) it sends nothing and logs `email skipped` with the record id. A failure is logged as `email failed` with the record id and Resend's error name, and returns false. |
 | `templates/` | the intake emails (team notification, visitor confirmation), see [templates/README.md](templates/README.md) |
 
 ## Rules
