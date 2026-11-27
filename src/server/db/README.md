@@ -50,7 +50,8 @@ Every table has `id` (uuid, generated), `created_at` and `updated_at`. `updated_
 2. Run `npm run db:generate`. It writes a new SQL file and snapshot to `drizzle/` and needs no database
    connection.
 3. Commit `schema.ts` and the generated files together, in the same PR.
-4. `npm run db:migrate` applies pending migrations to the database in `DATABASE_URL`.
+4. `npm run db:migrate` applies pending migrations to the database in `DATABASE_URL` (local or a Neon branch).
+   Production is migrated automatically on its next deploy.
 
 **Never edit a migration that has been applied anywhere.** Make a new one. See [drizzle/README.md](../../../drizzle/README.md).
 

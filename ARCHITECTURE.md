@@ -206,6 +206,7 @@ Site-wide metadata (title template, description, OG, Twitter card, favicon) is s
 | Name | Used for |
 |---|---|
 | `DATABASE_URL` | Postgres connection (Neon) |
+| `DATABASE_URL_UNPOOLED` | direct Postgres connection for migrations on production deploys |
 | `AUTH_SECRET` | Auth.js session signing |
 | `ADMIN_EMAILS` | comma-separated allow-list for `/admin` |
 | `RESEND_API_KEY` | sending email |
