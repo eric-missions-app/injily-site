@@ -15,10 +15,12 @@
     "drizzle-orm": "^0.36.4",
     "framer-motion": "^11.11.17",
     "next": "^14.2.35",
+    "next-auth": "^5.0.0-beta.32",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "server-only": "^0.0.1",
-    "ws": "^8.23.0"
+    "ws": "^8.23.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^20.17.6",

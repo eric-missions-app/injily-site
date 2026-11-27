@@ -31,6 +31,7 @@ Every table has `id` (uuid, generated), `created_at` and `updated_at`. `updated_
 | `opportunities` | organization, lead, name, stage (`discovery`, `onboarding`, `active`, `lost`), expected start, notes | |
 | `activities` | the timeline for any record: `record_type` + `record_id`, kind (`note`, `status_change`, `email`), body, author email | indexed on (`record_type`, `record_id`) |
 | `submissions` | one row per intake request: kind, salted IP hash | indexed on (`ip_hash`, `created_at`) for the 5-per-10-minutes rate limit |
+| `verification_tokens` | admin sign-in links: the email (`identifier`), the token (hashed by Auth.js), `expires`. A row is deleted when its link is used. | **unique `token`** |
 
 ### How intake uses the constraints
 

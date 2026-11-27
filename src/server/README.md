@@ -8,10 +8,22 @@ connection and secrets out of the browser.
 
 | Folder / file | What it holds | Ticket |
 |---|---|---|
-| `db/` | the Drizzle schema and the one database connection | J-1 (here now), see [db/README.md](db/README.md) |
-| `services/` | business logic: `people.ts`, `organizations.ts`, `leads.ts`, `cases.ts`, `rateLimit.ts`, then `opportunities.ts` | J-2, J-5 |
-| `email/` | the Resend client and the email templates (team notification, visitor confirmation) | J-3 |
-| `auth.ts` | Auth.js config: email magic links, limited to `ADMIN_EMAILS` | J-4 |
+| `db/` | the Drizzle schema and the one database connection | here now, see [db/README.md](db/README.md) |
+| `services/` | business logic. Here now: the admin side of `leads.ts` and `cases.ts`, `activities.ts`, `signInTokens.ts`. Coming: intake (`people.ts`, `organizations.ts`, `rateLimit.ts`), then `opportunities.ts` | see [services/README.md](services/README.md); J-2, J-5 |
+| `email/` | the Resend client and the email templates (team notification, visitor confirmation) | coming |
+| `auth.ts` | Auth.js: email magic links via Resend, accepted only for `ADMIN_EMAILS`; JWT sessions. Exports `handlers`, `auth`, `signIn`, `signOut` and `requireAdmin()` | here now |
+| `auth.config.ts` | the Edge-safe part of the Auth.js config that `src/middleware.ts` uses (no adapter, no provider), plus `isAdminEmail()` | here now |
+
+## Admin sign-in
+
+- A link is requested at `/api/auth/signin`. **Only an address in `ADMIN_EMAILS` gets one.** Any other address gets
+  no email and lands on the same "Check your email" page, so the form doesn't reveal who's an admin.
+- The link's token is stored hashed in `verification_tokens` (through `services/signInTokens.ts`) and works once.
+- Sessions are signed JWT cookies (`AUTH_SECRET`); there are no users or sessions tables. Middleware, the admin
+  layout, every admin page and every Server Action re-check that the session's email is still on the allow-list,
+  so removing an address locks it out on its next request.
+- **Every admin page and Server Action calls `requireAdmin()` first.** It returns the admin's email (for
+  `activities.author_email`) or redirects to sign-in.
 
 ## Who may import what
 
