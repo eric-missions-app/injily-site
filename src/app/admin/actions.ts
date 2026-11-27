@@ -92,6 +92,9 @@ export async function changeStatus(_prev: ActionState, formData: FormData): Prom
       input.recordType === 'lead'
         ? await setLeadStatus(input.id, input.status, actor)
         : await setCaseStatus(input.id, input.status, actor);
+    if (result === 'use_convert') {
+      return { status: 'error', message: 'Only “Convert to opportunity” can mark a lead converted.' };
+    }
     return result === 'ok' ? saved(input.recordType, input.id) : NOT_FOUND;
   });
 }

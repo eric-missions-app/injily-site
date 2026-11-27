@@ -26,6 +26,8 @@ export default async function LeadPage({ params }: { params: { id: string } }) {
   if (!detail) notFound();
   const { lead, person, organization, opportunities, activities } = detail;
   const canConvert = lead.status === 'qualified' && opportunities.length === 0;
+  // Only converting sets `converted`, so the picker lists it only when the lead already has it.
+  const statusOptions = LEAD_STATUSES.filter((s) => s !== 'converted' || lead.status === 'converted');
 
   return (
     <>
@@ -144,7 +146,7 @@ export default async function LeadPage({ params }: { params: { id: string } }) {
                 <input type="hidden" name="id" value={lead.id} />
                 <label htmlFor="status" className="block text-sm font-semibold">Status</label>
                 <select id="status" name="status" defaultValue={lead.status} className={field}>
-                  {LEAD_STATUSES.map((s) => (
+                  {statusOptions.map((s) => (
                     <option key={s} value={s}>{statusLabel(s)}</option>
                   ))}
                 </select>

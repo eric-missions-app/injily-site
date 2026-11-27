@@ -70,12 +70,16 @@ export async function getLead(id: string): Promise<LeadDetail | null> {
   return { ...row, opportunities: leadOpportunities, activities: timeline };
 }
 
-/** Sets a Lead's status and records the change on its timeline. Setting the current status changes nothing. */
+/**
+ * Sets a Lead's status and records the change on its timeline. Setting the current status changes nothing. A change
+ * to `converted` is refused with `'use_convert'`: only `convertLeadToOpportunity` makes it, together with the
+ * opportunity.
+ */
 export async function setLeadStatus(
   id: string,
   status: LeadStatus,
   actorEmail: string,
-): Promise<'ok' | 'not_found'> {
+): Promise<'ok' | 'not_found' | 'use_convert'> {
   return getDb().transaction(async (tx) => {
     const [current] = await tx
       .select({ status: leads.status })
@@ -84,6 +88,7 @@ export async function setLeadStatus(
       .for('update');
     if (!current) return 'not_found';
     if (current.status === status) return 'ok';
+    if (status === 'converted') return 'use_convert';
 
     await tx.update(leads).set({ status }).where(eq(leads.id, id));
     await tx.insert(activities).values({

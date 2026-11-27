@@ -5,7 +5,7 @@ Actions validate their input, then call a function here.
 
 | File | What it does |
 |---|---|
-| `leads.ts` | `listLeads(status?)` (newest first, with the person's name and country, else the organization's), `getLead(id)` (lead, person, organization, the opportunity it was converted into, and timeline), `setLeadStatus` and `setLeadOwner`. The intake functions arrive with J-2. |
+| `leads.ts` | `listLeads(status?)` (newest first, with the person's name and country, else the organization's), `getLead(id)` (lead, person, organization, the opportunity it was converted into, and timeline), `setLeadStatus` (returns `'use_convert'` for a change to `converted`, which only `convertLeadToOpportunity` makes) and `setLeadOwner`. The intake functions arrive with J-2. |
 | `cases.ts` | The same for Service Cases: `listCases`, `getCase` (the organization is the person's), `setCaseStatus`, `setCaseOwner`. |
 | `people.ts` | `listPeople(query?)` (by last then first name; `query` matches first, last or full name or email), `getPerson(id)` (person, organization, leads, cases) and `updatePerson(input)`, which returns `'email_taken'` if another person has the email and `'organization_not_found'` for a missing organization. |
 | `organizations.ts` | `listOrganizations(query?)` (by name; `query` matches the name), `listOrganizationOptions()` (the Person form's organization picker), `getOrganization(id)` (organization, people, leads, opportunities) and `updateOrganization(input)`, which returns `'duplicate'` if another organization has the same name (case-insensitive) and country. |
