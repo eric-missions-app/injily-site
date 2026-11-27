@@ -1,4 +1,5 @@
 import FadeIn from '@/components/FadeIn';
+import IconTile from '@/components/IconTile';
 
 const POINTS = [
   {
@@ -38,12 +39,7 @@ export default function WhyItMatters() {
           {POINTS.map((point, index) => (
             <li key={point.title}>
               <FadeIn delay={index * 0.1} className="h-full rounded-2xl border border-border bg-surface p-6">
-                <span
-                  aria-hidden="true"
-                  className="material-symbols-outlined flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-2xl text-primary"
-                >
-                  {point.icon}
-                </span>
+                <IconTile icon={point.icon} />
                 <h3 className="mt-4 text-lg font-bold text-text">{point.title}</h3>
                 <p className="mt-2 text-muted">{point.body}</p>
               </FadeIn>

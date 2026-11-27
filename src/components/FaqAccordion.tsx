@@ -32,11 +32,10 @@ export default function FaqAccordion({ entries, headingLevel: Heading }: FaqAcco
                 className="flex w-full items-center justify-between gap-4 rounded-2xl px-6 py-5 text-left text-lg font-bold text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 {entry.question}
-                <span
-                  aria-hidden="true"
-                  className={`material-symbols-outlined text-2xl text-muted transition-transform ${open ? 'rotate-180' : ''}`}
-                >
-                  expand_more
+                <span className={`flex text-2xl text-muted transition-transform ${open ? 'rotate-180' : ''}`}>
+                  <span aria-hidden="true" className="material-symbols-outlined">
+                    expand_more
+                  </span>
                 </span>
               </button>
             </Heading>

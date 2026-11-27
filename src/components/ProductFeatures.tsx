@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import FadeIn from '@/components/FadeIn';
+import IconTile from '@/components/IconTile';
 import type { NavLink } from '@/lib/site';
 
 export type ProductPoint = {
@@ -35,12 +36,7 @@ export default function ProductFeatures({ title, subtitle, points }: ProductFeat
                 delay={index * 0.1}
                 className="flex h-full flex-col rounded-2xl border border-border bg-surface p-6"
               >
-                <span
-                  aria-hidden="true"
-                  className="material-symbols-outlined flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-2xl text-primary"
-                >
-                  {point.icon}
-                </span>
+                <IconTile icon={point.icon} />
                 <h3 className="mt-4 text-lg font-bold text-text">{point.title}</h3>
                 <p className="mt-2 flex-1 text-muted">{point.body}</p>
                 {point.link && (
@@ -49,8 +45,10 @@ export default function ProductFeatures({ title, subtitle, points }: ProductFeat
                     className="mt-4 inline-flex items-center gap-1 self-start rounded-md text-sm font-bold text-primary hover:text-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   >
                     More about {point.link.label}
-                    <span aria-hidden="true" className="material-symbols-outlined text-lg">
-                      arrow_forward
+                    <span className="flex text-lg">
+                      <span aria-hidden="true" className="material-symbols-outlined">
+                        arrow_forward
+                      </span>
                     </span>
                   </Link>
                 )}

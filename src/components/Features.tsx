@@ -1,4 +1,5 @@
 import FadeIn from '@/components/FadeIn';
+import IconTile from '@/components/IconTile';
 
 const FEATURES = [
   {
@@ -33,12 +34,7 @@ export default function Features() {
           {FEATURES.map((feature, index) => (
             <li key={feature.title}>
               <FadeIn delay={index * 0.1} className="h-full rounded-2xl border border-border bg-surface p-6">
-                <span
-                  aria-hidden="true"
-                  className="material-symbols-outlined flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-2xl text-primary"
-                >
-                  {feature.icon}
-                </span>
+                <IconTile icon={feature.icon} />
                 <h3 className="mt-4 text-lg font-bold text-text">{feature.title}</h3>
                 <p className="mt-2 text-muted">{feature.body}</p>
               </FadeIn>

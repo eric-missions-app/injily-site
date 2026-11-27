@@ -66,9 +66,9 @@ export default function Header() {
           aria-controls="mobile-menu"
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           onClick={() => setMenuOpen((value) => !value)}
-          className={`flex h-10 w-10 items-center justify-center rounded-md text-text md:hidden ${focusRing}`}
+          className={`flex h-10 w-10 items-center justify-center rounded-md text-2xl text-text md:hidden ${focusRing}`}
         >
-          <span aria-hidden="true" className="material-symbols-outlined text-2xl">
+          <span aria-hidden="true" className="material-symbols-outlined">
             {menuOpen ? 'close' : 'menu'}
           </span>
         </button>

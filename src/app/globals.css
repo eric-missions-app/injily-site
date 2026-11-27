@@ -50,7 +50,15 @@ body {
   @apply bg-background text-text antialiased;
 }
 
-.material-symbols-outlined {
+/*
+ * The Google Fonts stylesheet has its own `.material-symbols-outlined` rule (display: inline-block; font-size: 24px).
+ * The doubled class outranks it whichever stylesheet loads last. The glyph takes its size from its parent
+ * (`font-size: inherit`), so put size classes (`text-lg`, `text-2xl`) and layout classes on the parent, never on the
+ * glyph span: they lose to this rule there.
+ */
+.material-symbols-outlined.material-symbols-outlined {
+  display: inline-block;
+  font-size: inherit;
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   line-height: 1;
 }

@@ -49,11 +49,10 @@ export default function DropdownMenu({ group }: { group: NavGroup }) {
         className="flex items-center gap-1 rounded-md px-3 py-2 text-sm font-semibold text-text transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
         {group.label}
-        <span
-          aria-hidden="true"
-          className={`material-symbols-outlined text-lg transition-transform ${open ? 'rotate-180' : ''}`}
-        >
-          expand_more
+        <span className={`flex text-lg transition-transform ${open ? 'rotate-180' : ''}`}>
+          <span aria-hidden="true" className="material-symbols-outlined">
+            expand_more
+          </span>
         </span>
       </button>
 

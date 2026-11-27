@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import FadeIn from '@/components/FadeIn';
+import IconTile from '@/components/IconTile';
 
 const AUDIENCES = [
   {
@@ -39,18 +40,15 @@ export default function Audiences() {
                   href={audience.href}
                   className="group flex h-full flex-col rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 >
-                  <span
-                    aria-hidden="true"
-                    className="material-symbols-outlined flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-2xl text-primary"
-                  >
-                    {audience.icon}
-                  </span>
+                  <IconTile icon={audience.icon} />
                   <h3 className="mt-4 text-lg font-bold text-text">{audience.title}</h3>
                   <p className="mt-2 flex-1 text-muted">{audience.body}</p>
                   <span className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-primary group-hover:text-primary-hover">
                     Learn more
-                    <span aria-hidden="true" className="material-symbols-outlined text-lg">
-                      arrow_forward
+                    <span className="flex text-lg">
+                      <span aria-hidden="true" className="material-symbols-outlined">
+                        arrow_forward
+                      </span>
                     </span>
                   </span>
                 </Link>
