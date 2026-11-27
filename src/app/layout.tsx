@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     template: '%s | injily',
   },
   description:
-    'injily helps churches, evangelists and mission teams track converts, follow up and mentor new believers.',
+    "We're building injily to help churches, evangelists and mission teams follow up with every new believer.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

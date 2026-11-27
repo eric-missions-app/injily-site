@@ -19,3 +19,5 @@ words live here so they're written once.
 ## Common changes
 
 - **Add or reword a question:** edit `faq.ts`. Order matters: the first four entries are the homepage preview.
+  Answers follow the content rules in `ARCHITECTURE.md`: say what injily is being built to do, and promise nothing
+  else (no pricing, privacy, import or mobile claims).

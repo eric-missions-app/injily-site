@@ -15,6 +15,7 @@ export default function Footer() {
             >
               {SITE_NAME}
             </Link>
+            <p className="mt-3 text-sm text-muted">Helping churches follow up with every new believer.</p>
           </div>
 
           {FOOTER_COLUMNS.map((column) => (

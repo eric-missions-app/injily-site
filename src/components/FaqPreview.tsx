@@ -8,7 +8,7 @@ const PREVIEW = FAQ.slice(0, 4);
 
 export default function FaqPreview() {
   return (
-    <section className="bg-background-light">
+    <section className="bg-background">
       <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <FadeIn className="text-center">
           <h2 className="text-3xl font-extrabold tracking-tight text-text sm:text-4xl">Frequently asked questions</h2>

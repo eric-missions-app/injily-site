@@ -5,9 +5,8 @@ screenshots live here.
 
 ## What's here now
 
-| File | Used by |
-|---|---|
-| `hero-illustration.svg` | `src/components/Hero.tsx`: a stylised injily dashboard (converts with their follow-up status, an upcoming meeting, a mentor pairing). It's drawn in the light palette from `globals.css`. |
+Nothing yet. The hero's app mockup was removed: the site shows no mockups or invented screenshots (see "Content
+rules" in `ARCHITECTURE.md`).
 
 ## Rules
 
