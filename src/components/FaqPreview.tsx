@@ -24,8 +24,10 @@ export default function FaqPreview() {
             className="inline-flex items-center gap-1 rounded-md font-bold text-primary hover:text-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             See all questions
-            <span aria-hidden="true" className="material-symbols-outlined text-lg">
-              arrow_forward
+            <span className="flex text-lg">
+              <span aria-hidden="true" className="material-symbols-outlined">
+                arrow_forward
+              </span>
             </span>
           </Link>
         </div>

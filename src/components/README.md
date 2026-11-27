@@ -20,6 +20,7 @@ forms are in [`forms/`](forms/README.md).
 | `CTA.tsx` | no | The dark `bg-primary-darker` card every marketing page ends with (not `/get-started`, `/contact` or `/privacy`): "Want to be first to try injily?", "Leave your details and we'll be in touch." and one `CTA_LABEL` button to `CTA_HREF`, light on the card (`bg-surface text-primary`) for the strongest contrast. Put `<CTA />` after the page's last section. The one optional prop, `tone`, sets the section background behind the card: `bg-background` by default, or `bg-background-light` with `tone="light"` when the section above is `bg-background` (the homepage). |
 | `ProductHero.tsx` | no | The opening section of a product or use-case page (`bg-background`): a breadcrumb (`parent` link, then `name` as the current page, e.g. "Product / Convert tracking"), the `title` (the page's `h1`), and the `subtitle` (the page's one-sentence intro, in the future tense). Text only: no mockup or visual. No entrance motion: it's above the fold. |
 | `ProductFeatures.tsx` | no | A product or use-case page's grid of at most three `points` (Material Symbols icon, title, body) under a `title` and optional `subtitle`, on `bg-background-light`, three across from `md`. A point's optional `link` adds a "More about <label>" link to a `/product` page under its body (the use-case pages use it). |
+| `IconTile.tsx` | no | The 48×48 rounded, tinted icon box on the cards of `Features`, `WhyItMatters`, `Audiences` and `ProductFeatures`: an outer box that centers and sizes (`text-2xl`) the `icon` glyph inside it. |
 
 ## Coming next
 
@@ -45,6 +46,14 @@ forms are in [`forms/`](forms/README.md).
 - **Icons:** `<span aria-hidden="true" className="material-symbols-outlined">name</span>`. The font only serves the
   glyphs listed in `icon_names` in `src/app/layout.tsx`, so **add every new icon name there** (alphabetical), or it
   shows up as the word.
+  - **Never put layout or size classes on the glyph span** (`flex`, `h-12`, `items-center`, `text-lg`, …). The icon
+    font's CSS and the `.material-symbols-outlined` rule in `globals.css` override them there. The glyph takes its
+    size from its parent (`font-size: inherit`), so size and position it from a wrapper.
+  - **Icon tiles** (the rounded, tinted box on a card) use `<IconTile icon="name" />`.
+  - **Inline icons** next to text sit in a sizing wrapper inside a `flex items-center` or `inline-flex items-center`
+    parent: `<span className="flex text-lg"><span aria-hidden="true" className="material-symbols-outlined">arrow_forward</span></span>`.
+    Put a rotation (`transition-transform rotate-180`) on the wrapper too. If the icon is the parent's only content
+    (the header menu button), put the size class on the parent and skip the wrapper.
 - **Images:** use `next/image`. An external host must first be allow-listed in `next.config.js`
   `images.remotePatterns`.
 - **No app links.** There's no Log in, Sign up or Dashboard on the site. Every call to action uses `CTA_LABEL` /
