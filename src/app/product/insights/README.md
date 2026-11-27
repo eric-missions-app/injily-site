@@ -4,7 +4,6 @@ The Insights product page, at `/product/insights`. Follows the rules in [../READ
 
 | File | What it does |
 |---|---|
-| `page.tsx` | `metadata`, then `ProductHero` ("Product / Insights", with `InsightsVisual`: a church-branded dashboard with an unlabeled convert growth chart, the pipeline by stage, and top missioners by discipleship activity), `ProductFeatures` with six points (the convert pipeline; convert growth over time; task completion; converts needing attention; top missioners by discipleship activity; messages to missioners and church branding, logo and theme color, shown to the team), and `CTA`. |
+| `page.tsx` | `metadata`, then `ProductHero` ("Product / Insights", "See which new believers need attention.", and the intro: we're building injily to help you see which new believers need attention), `ProductFeatures` "What we're building" with three points (see who needs attention; keep track of every new believer; someone responsible for each person), and `CTA`. |
 
-The homepage's Analytics & Insights card links here. The visual's bars are an illustrative shape, not data: keep
-numbers off it.
+All three use-case pages link here. Keep it to seeing who needs attention: no charts, numbers or reports.
