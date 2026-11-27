@@ -1,8 +1,8 @@
 import 'server-only';
 import { desc, eq } from 'drizzle-orm';
-import type { LeadStatus } from '@/lib/validation/admin';
+import type { LeadStatus, OpportunityStage } from '@/lib/validation/admin';
 import { getDb } from '@/server/db/client';
-import { activities, leads, organizations, people } from '@/server/db/schema';
+import { activities, leads, opportunities, organizations, people } from '@/server/db/schema';
 import { listActivities, ownerChangeBody, type Activity } from './activities';
 
 export type LeadListRow = {
@@ -45,10 +45,12 @@ export type LeadDetail = {
   lead: typeof leads.$inferSelect;
   person: typeof people.$inferSelect;
   organization: typeof organizations.$inferSelect | null;
+  /** The opportunity this lead was converted into, if any. */
+  opportunities: { id: string; name: string; stage: OpportunityStage }[];
   activities: Activity[];
 };
 
-/** One Lead with its person, organization and timeline, or null if it doesn't exist. */
+/** One Lead with its person, organization, opportunity and timeline, or null if it doesn't exist. */
 export async function getLead(id: string): Promise<LeadDetail | null> {
   const [row] = await getDb()
     .select({ lead: leads, person: people, organization: organizations })
@@ -57,7 +59,15 @@ export async function getLead(id: string): Promise<LeadDetail | null> {
     .leftJoin(organizations, eq(leads.organizationId, organizations.id))
     .where(eq(leads.id, id));
   if (!row) return null;
-  return { ...row, activities: await listActivities('lead', id) };
+  const [leadOpportunities, timeline] = await Promise.all([
+    getDb()
+      .select({ id: opportunities.id, name: opportunities.name, stage: opportunities.stage })
+      .from(opportunities)
+      .where(eq(opportunities.leadId, id))
+      .orderBy(desc(opportunities.createdAt)),
+    listActivities('lead', id),
+  ]);
+  return { ...row, opportunities: leadOpportunities, activities: timeline };
 }
 
 /** Sets a Lead's status and records the change on its timeline. Setting the current status changes nothing. */

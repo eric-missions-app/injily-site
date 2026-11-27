@@ -3,27 +3,20 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { z } from 'zod';
 import ActionForm from '@/components/admin/ActionForm';
+import Detail from '@/components/admin/Detail';
+import { fieldClass as field } from '@/components/admin/Fields';
 import StatusBadge from '@/components/admin/StatusBadge';
+import Timeline from '@/components/admin/Timeline';
 import { formatDateTime, statusLabel } from '@/lib/format';
 import { LEAD_STATUSES } from '@/lib/validation/admin';
-import { addNoteAction, changeOwner, changeStatus } from '@/app/admin/actions';
+import { addNoteAction, changeOwner, changeStatus, convertLeadAction } from '@/app/admin/actions';
 import { requireAdmin } from '@/server/auth';
 import { getLead } from '@/server/services/leads';
 
 export const metadata: Metadata = { title: 'Lead' };
 
 const card = 'rounded-lg border border-border bg-surface p-5';
-const field =
-  'w-full rounded-md border border-border bg-surface px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary';
-
-function Detail({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div className="grid grid-cols-3 gap-3 py-1.5 text-sm">
-      <dt className="text-muted">{label}</dt>
-      <dd className="col-span-2 break-words">{value || <span className="text-muted">—</span>}</dd>
-    </div>
-  );
-}
+const link = 'rounded text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary';
 
 export default async function LeadPage({ params }: { params: { id: string } }) {
   await requireAdmin();
@@ -31,7 +24,8 @@ export default async function LeadPage({ params }: { params: { id: string } }) {
   if (!id.success) notFound();
   const detail = await getLead(id.data);
   if (!detail) notFound();
-  const { lead, person, organization, activities } = detail;
+  const { lead, person, organization, opportunities, activities } = detail;
+  const canConvert = lead.status === 'qualified' && opportunities.length === 0;
 
   return (
     <>
@@ -64,7 +58,14 @@ export default async function LeadPage({ params }: { params: { id: string } }) {
           <section className={card} aria-labelledby="person">
             <h2 id="person" className="font-bold">Person</h2>
             <dl className="mt-3">
-              <Detail label="Name" value={`${person.firstName} ${person.lastName}`} />
+              <Detail
+                label="Name"
+                value={
+                  <Link href={`/admin/people/${person.id}`} className={link}>
+                    {person.firstName} {person.lastName}
+                  </Link>
+                }
+              />
               <Detail
                 label="Email"
                 value={
@@ -84,7 +85,14 @@ export default async function LeadPage({ params }: { params: { id: string } }) {
             <h2 id="organization" className="font-bold">Organization</h2>
             {organization ? (
               <dl className="mt-3">
-                <Detail label="Name" value={organization.name} />
+                <Detail
+                  label="Name"
+                  value={
+                    <Link href={`/admin/organizations/${organization.id}`} className={link}>
+                      {organization.name}
+                    </Link>
+                  }
+                />
                 <Detail label="Type" value={statusLabel(organization.type)} />
                 <Detail label="City" value={organization.city} />
                 <Detail label="Country" value={organization.country} />
@@ -99,6 +107,36 @@ export default async function LeadPage({ params }: { params: { id: string } }) {
         <div className="space-y-6">
           <section className={card} aria-labelledby="work">
             <h2 id="work" className="font-bold">Work this lead</h2>
+
+            {opportunities.length > 0 && (
+              <dl className="mt-3">
+                {opportunities.map((opportunity) => (
+                  <Detail
+                    key={opportunity.id}
+                    label="Opportunity"
+                    value={
+                      <span className="flex flex-wrap items-center gap-2">
+                        <Link href={`/admin/opportunities/${opportunity.id}`} className={link}>
+                          {opportunity.name}
+                        </Link>
+                        <StatusBadge status={opportunity.stage} />
+                      </span>
+                    }
+                  />
+                ))}
+              </dl>
+            )}
+
+            {canConvert && (
+              <div className="mt-4">
+                <ActionForm action={convertLeadAction} submitLabel="Convert to opportunity">
+                  <input type="hidden" name="leadId" value={lead.id} />
+                  <p className="text-sm text-muted">
+                    Creates an opportunity at stage discovery and marks this lead converted.
+                  </p>
+                </ActionForm>
+              </div>
+            )}
 
             <div className="mt-4">
               <ActionForm action={changeStatus} submitLabel="Save status">
@@ -141,24 +179,7 @@ export default async function LeadPage({ params }: { params: { id: string } }) {
             </div>
           </section>
 
-          <section className={card} aria-labelledby="timeline">
-            <h2 id="timeline" className="font-bold">Timeline</h2>
-            {activities.length === 0 ? (
-              <p className="mt-3 text-sm text-muted">Nothing yet.</p>
-            ) : (
-              <ol className="mt-3 space-y-4">
-                {activities.map((activity) => (
-                  <li key={activity.id} className="border-l-2 border-border pl-3 text-sm">
-                    <p className="text-xs text-muted">
-                      {statusLabel(activity.kind)} · {activity.authorEmail ?? 'system'} ·{' '}
-                      <time dateTime={activity.createdAt.toISOString()}>{formatDateTime(activity.createdAt)}</time>
-                    </p>
-                    <p className="mt-1 whitespace-pre-wrap">{activity.body}</p>
-                  </li>
-                ))}
-              </ol>
-            )}
-          </section>
+          <Timeline activities={activities} />
         </div>
       </div>
     </>

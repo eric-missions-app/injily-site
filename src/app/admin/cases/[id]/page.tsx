@@ -3,7 +3,10 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { z } from 'zod';
 import ActionForm from '@/components/admin/ActionForm';
+import Detail from '@/components/admin/Detail';
+import { fieldClass as field } from '@/components/admin/Fields';
 import StatusBadge from '@/components/admin/StatusBadge';
+import Timeline from '@/components/admin/Timeline';
 import { formatDateTime, statusLabel } from '@/lib/format';
 import { CASE_STATUSES } from '@/lib/validation/admin';
 import { addNoteAction, changeOwner, changeStatus } from '@/app/admin/actions';
@@ -13,17 +16,7 @@ import { getCase } from '@/server/services/cases';
 export const metadata: Metadata = { title: 'Service Case' };
 
 const card = 'rounded-lg border border-border bg-surface p-5';
-const field =
-  'w-full rounded-md border border-border bg-surface px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary';
-
-function Detail({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div className="grid grid-cols-3 gap-3 py-1.5 text-sm">
-      <dt className="text-muted">{label}</dt>
-      <dd className="col-span-2 break-words">{value || <span className="text-muted">—</span>}</dd>
-    </div>
-  );
-}
+const link = 'rounded text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary';
 
 export default async function CasePage({ params }: { params: { id: string } }) {
   await requireAdmin();
@@ -65,7 +58,14 @@ export default async function CasePage({ params }: { params: { id: string } }) {
           <section className={card} aria-labelledby="person">
             <h2 id="person" className="font-bold">Person</h2>
             <dl className="mt-3">
-              <Detail label="Name" value={`${person.firstName} ${person.lastName}`} />
+              <Detail
+                label="Name"
+                value={
+                  <Link href={`/admin/people/${person.id}`} className={link}>
+                    {person.firstName} {person.lastName}
+                  </Link>
+                }
+              />
               <Detail
                 label="Email"
                 value={
@@ -85,7 +85,14 @@ export default async function CasePage({ params }: { params: { id: string } }) {
             <h2 id="organization" className="font-bold">Organization</h2>
             {organization ? (
               <dl className="mt-3">
-                <Detail label="Name" value={organization.name} />
+                <Detail
+                  label="Name"
+                  value={
+                    <Link href={`/admin/organizations/${organization.id}`} className={link}>
+                      {organization.name}
+                    </Link>
+                  }
+                />
                 <Detail label="Type" value={statusLabel(organization.type)} />
                 <Detail label="City" value={organization.city} />
                 <Detail label="Country" value={organization.country} />
@@ -142,24 +149,7 @@ export default async function CasePage({ params }: { params: { id: string } }) {
             </div>
           </section>
 
-          <section className={card} aria-labelledby="timeline">
-            <h2 id="timeline" className="font-bold">Timeline</h2>
-            {activities.length === 0 ? (
-              <p className="mt-3 text-sm text-muted">Nothing yet.</p>
-            ) : (
-              <ol className="mt-3 space-y-4">
-                {activities.map((activity) => (
-                  <li key={activity.id} className="border-l-2 border-border pl-3 text-sm">
-                    <p className="text-xs text-muted">
-                      {statusLabel(activity.kind)} · {activity.authorEmail ?? 'system'} ·{' '}
-                      <time dateTime={activity.createdAt.toISOString()}>{formatDateTime(activity.createdAt)}</time>
-                    </p>
-                    <p className="mt-1 whitespace-pre-wrap">{activity.body}</p>
-                  </li>
-                ))}
-              </ol>
-            )}
-          </section>
+          <Timeline activities={activities} />
         </div>
       </div>
     </>

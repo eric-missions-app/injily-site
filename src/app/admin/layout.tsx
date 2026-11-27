@@ -14,6 +14,9 @@ export const metadata: Metadata = {
 const ADMIN_NAV = [
   { label: 'Leads', href: '/admin/leads' },
   { label: 'Cases', href: '/admin/cases' },
+  { label: 'People', href: '/admin/people' },
+  { label: 'Organizations', href: '/admin/organizations' },
+  { label: 'Opportunities', href: '/admin/opportunities' },
 ];
 
 const focusRing = 'rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary';

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import FilterPills from '@/components/admin/FilterPills';
 import StatusBadge from '@/components/admin/StatusBadge';
 import { formatDateTime, statusLabel } from '@/lib/format';
 import { CASE_STATUSES, caseStatusFilter } from '@/lib/validation/admin';
@@ -15,34 +16,17 @@ export default async function CasesPage({ searchParams }: { searchParams: { stat
   const status = caseStatusFilter.parse(searchParams.status);
   const cases = await listCases(status);
 
-  const filters = [{ label: 'All', value: undefined }, ...CASE_STATUSES.map((s) => ({ label: statusLabel(s), value: s }))];
-
   return (
     <>
       <h1 className="text-2xl font-bold">Service Cases</h1>
 
-      <nav aria-label="Filter by status" className="mt-6">
-        <ul className="flex flex-wrap gap-2 text-sm">
-          {filters.map((filter) => {
-            const active = filter.value === status;
-            return (
-              <li key={filter.label}>
-                <Link
-                  href={filter.value ? `/admin/cases?status=${filter.value}` : '/admin/cases'}
-                  aria-current={active ? 'page' : undefined}
-                  className={`inline-block rounded-full border px-3 py-1 font-semibold ${focusRing} ${
-                    active
-                      ? 'border-primary bg-primary text-on-primary'
-                      : 'border-border bg-surface hover:border-primary'
-                  }`}
-                >
-                  {filter.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+      <FilterPills
+        basePath="/admin/cases"
+        param="status"
+        values={CASE_STATUSES}
+        current={status}
+        label="Filter by status"
+      />
 
       <div className="mt-6 overflow-x-auto rounded-lg border border-border bg-surface">
         <table className="w-full text-left text-sm">

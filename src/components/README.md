@@ -22,7 +22,6 @@ forms go in `forms/` (J-11).
 | `HowItWorks`, `Audiences`, `FaqPreview`, `CTA` | J-7 | `CTA` is the dark `bg-primary-darker` card every page ends with |
 | `ProductHero`, `ProductFeatures` | J-8 | shared by the 5 product and 3 use-case pages |
 | `forms/LeadForm`, `forms/CaseForm` | J-11 | client components that POST to `/api/intake/*` |
-| `admin/*` | J-5 | more admin components for People, Organizations and Opportunities |
 
 ## Rules
 
