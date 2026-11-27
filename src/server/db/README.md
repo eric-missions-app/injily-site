@@ -8,7 +8,7 @@ here.**
 | File | What it does |
 |---|---|
 | `schema.ts` | Every table, enum, index and check constraint. This is the source of truth for the database; migrations are generated from it. |
-| `client.ts` | `getDb()`, the one database connection. It's created on first use, so `next build` works without `DATABASE_URL`, and a request without it fails with "DATABASE_URL is not set". It uses Neon's WebSocket driver (`ws`) because intake needs transactions, which the HTTP driver doesn't support. |
+| `client.ts` | `getDb()`, the one database connection. It's created on first use, so `next build` works without `DATABASE_URL`, and a request without it fails with "DATABASE_URL is not set". It uses Neon's WebSocket driver (`ws`) because intake needs transactions, which the HTTP driver doesn't support. It also exports `Tx`, the type of the handle inside `transaction()`, for service helpers that join another service's transaction. |
 
 ```ts
 import { getDb } from '@/server/db/client';

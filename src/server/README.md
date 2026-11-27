@@ -9,8 +9,8 @@ connection and secrets out of the browser.
 | Folder / file | What it holds | Ticket |
 |---|---|---|
 | `db/` | the Drizzle schema and the one database connection | here now, see [db/README.md](db/README.md) |
-| `services/` | business logic. Here now: the admin side of `leads.ts` and `cases.ts`, `activities.ts`, `signInTokens.ts`. Coming: intake (`people.ts`, `organizations.ts`, `rateLimit.ts`), then `opportunities.ts` | see [services/README.md](services/README.md); J-2, J-5 |
-| `email/` | the Resend client and the email templates (team notification, visitor confirmation) | coming |
+| `services/` | business logic. Here now: intake and the admin side of `leads.ts` and `cases.ts`, `people.ts`, `organizations.ts`, `rateLimit.ts`, `activities.ts`, `signInTokens.ts`. Coming: `opportunities.ts` | see [services/README.md](services/README.md); J-5 |
+| `email/` | the Resend client and the email templates (team notification, visitor confirmation) | J-3 |
 | `auth.ts` | Auth.js: email magic links via Resend, accepted only for `ADMIN_EMAILS`; JWT sessions. Exports `handlers`, `auth`, `signIn`, `signOut` and `requireAdmin()` | here now |
 | `auth.config.ts` | the Edge-safe part of the Auth.js config that `src/middleware.ts` uses (no adapter, no provider), plus `isAdminEmail()` | here now |
 

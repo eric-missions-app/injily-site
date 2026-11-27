@@ -35,9 +35,10 @@ There's one schema per input, and **the same schema runs in the browser and on t
 
 | File | Used by |
 |---|---|
-| `validation/admin.ts` | every admin Server Action (status, owner, note) and the list filters. Here now. |
-| `validation/lead.ts` | `LeadForm` and `POST /api/intake/lead` (J-2) |
-| `validation/case.ts` | `CaseForm` and `POST /api/intake/case` (J-2) |
+| `validation/shared.ts` | the fields `lead.ts` and `case.ts` share |
+| `validation/lead.ts` | `LeadForm` and `POST /api/intake/lead` |
+| `validation/case.ts` | `CaseForm` and `POST /api/intake/case` |
+| `validation/admin.ts` | every admin Server Action (status, owner, note) and the list filters |
 
 Export the schema and its inferred type together:
 

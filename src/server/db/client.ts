@@ -9,6 +9,9 @@ neonConfig.webSocketConstructor = ws;
 
 let instance: NeonDatabase<typeof schema> | undefined;
 
+/** The handle inside `getDb().transaction(async (tx) => …)`; services pass it to each other to share one transaction. */
+export type Tx = Parameters<Parameters<NeonDatabase<typeof schema>['transaction']>[0]>[0];
+
 /**
  * The one database connection. Import only from src/server/services.
  * Created on first use, so `next build` works without DATABASE_URL; a request without it fails with a clear error.

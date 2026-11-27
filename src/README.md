@@ -15,7 +15,7 @@ All the application code. This one Next.js app serves two halves with different 
 |---|---|---|
 | `app/` | routes: one folder per URL, plus the root layout and global CSS | [app/README.md](app/README.md) |
 | `components/` | React components for the marketing pages; `admin/` and `forms/` subfolders later | [components/README.md](components/README.md) |
-| `lib/` | site config (nav, CTA) now; Zod schemas in `lib/validation/` later | [lib/README.md](lib/README.md) |
+| `lib/` | site config (nav, CTA) and the Zod schemas in `lib/validation/` | [lib/README.md](lib/README.md) |
 | `server/` | server-only code: the database, services, email, auth | [server/README.md](server/README.md) |
 | `content/` | copy kept as data: the FAQ entries | [content/README.md](content/README.md) |
 | `middleware.ts` | protects `/admin/*`: no session for an `ADMIN_EMAILS` address means a redirect to sign-in. It uses the Edge-safe `server/auth.config.ts`. | [server/README.md](server/README.md) |

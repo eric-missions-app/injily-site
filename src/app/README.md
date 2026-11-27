@@ -11,6 +11,7 @@ is an API endpoint, and there's no router config anywhere.
 | `globals.css` | Tailwind's directives plus the **color tokens**: CSS variables under `:root` (light) and `.dark` (dark). This is the only place a color value is written. |
 | `page.tsx` | The homepage (`/`): `Header`, then `Hero`, `WhyItMatters`, `Features`, `HowItWorks`, `Audiences`, `FaqPreview` and `CTA` inside `<main className="pt-20">`, then `Footer`. Section backgrounds alternate `bg-background` / `bg-background-light` from the Hero down. |
 | `privacy/page.tsx` | The privacy policy (`/privacy`). Static. Read [privacy/README.md](privacy/README.md) before editing it. |
+| `api/intake/lead/route.ts`, `api/intake/case/route.ts` | The only public endpoints: `POST` a lead or a service case. See [api/README.md](api/README.md) and [api/intake/README.md](api/intake/README.md). |
 | `api/auth/[...nextauth]/route.ts` | Auth.js for admin sign-in. See [api/README.md](api/README.md). |
 | `admin/` | The signed-in CRM: Leads and Service Cases (list and detail) and their Server Actions. See [admin/README.md](admin/README.md). |
 
@@ -25,8 +26,6 @@ app/
   contact/page.tsx              J-11       Service Case form
   sitemap.ts, robots.ts         J-13
   not-found.tsx                 J-13
-  api/intake/lead/route.ts      J-2        the only public endpoints
-  api/intake/case/route.ts      J-2
   admin/people|organizations|opportunities/  J-5   more CRM screens
 ```
 
