@@ -32,12 +32,10 @@ export default async function CasePage({ params }: { params: { id: string } }) {
         <Link href="/admin/cases" className="rounded hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
           Cases
         </Link>{' '}
-        / {person.firstName} {person.lastName}
+        / {person.name}
       </p>
       <div className="mt-2 flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-bold">
-          {person.firstName} {person.lastName}
-        </h1>
+        <h1 className="text-2xl font-bold">{person.name}</h1>
         <StatusBadge status={serviceCase.status} />
       </div>
       <p className="mt-1 text-sm text-muted">Created {formatDateTime(serviceCase.createdAt)}</p>
@@ -62,7 +60,7 @@ export default async function CasePage({ params }: { params: { id: string } }) {
                 label="Name"
                 value={
                   <Link href={`/admin/people/${person.id}`} className={link}>
-                    {person.firstName} {person.lastName}
+                    {person.name}
                   </Link>
                 }
               />

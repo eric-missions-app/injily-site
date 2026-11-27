@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } fr
 import { flushSync } from 'react-dom';
 import { z } from 'zod';
 import { COUNTRIES } from '@/content/countries';
+import { firstWord } from '@/lib/format';
 import { ORGANIZATION_TYPES } from '@/lib/validation/shared';
 
 type FieldErrors = Partial<Record<string, string[]>>;
@@ -22,7 +23,7 @@ const inputClass =
 
 type IntakeFormProps = {
   /** `leadInput` or `caseInput`: the same schema the route handler parses with. */
-  schema: z.ZodType<{ firstName: string }, unknown>;
+  schema: z.ZodType<{ name: string }, unknown>;
   endpoint: '/api/intake/lead' | '/api/intake/case';
   submitLabel: string;
   /** The case form's required subject field. */
@@ -71,7 +72,7 @@ export default function IntakeForm({ schema, endpoint, submitLabel, withSubject,
         body: JSON.stringify(values),
       });
       if (response.ok) {
-        setSentTo(parsed.data.firstName);
+        setSentTo(firstWord(parsed.data.name));
         return;
       }
       const body: unknown = await response.json().catch(() => null);
@@ -107,8 +108,7 @@ export default function IntakeForm({ schema, endpoint, submitLabel, withSubject,
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} noValidate className="grid gap-6 sm:grid-cols-2">
-      <TextField name="firstName" label="First name" required autoComplete="given-name" error={error('firstName')} />
-      <TextField name="lastName" label="Last name" required autoComplete="family-name" error={error('lastName')} />
+      <TextField name="name" label="Name" required autoComplete="name" error={error('name')} />
       <TextField
         name="email"
         label="Email"

@@ -8,7 +8,7 @@ together with its inferred type.
 
 | File | Exports | Used by |
 |---|---|---|
-| `shared.ts` | `contactFields`, `requiredText`, `optionalText`, `ORGANIZATION_TYPES` | `lead.ts` and `case.ts` |
+| `shared.ts` | `contactFields`, `phoneNumber`, `requiredText`, `optionalText`, `ORGANIZATION_TYPES` | `lead.ts` and `case.ts` |
 | `lead.ts` | `leadInput`, `LeadInput` | `LeadForm` and `POST /api/intake/lead` |
 | `case.ts` | `caseInput`, `CaseInput` | `CaseForm` and `POST /api/intake/case` |
 | `admin.ts` | `statusChangeInput`, `ownerChangeInput`, `noteInput`, `personEditInput`, `organizationEditInput`, `opportunityEditInput`, `convertLeadInput`, `leadStatusFilter`, `caseStatusFilter`, `opportunityStageFilter`, `searchQuery`, `LEAD_STATUSES`, `CASE_STATUSES`, `ORGANIZATION_TYPES`, `OPPORTUNITY_STAGES` | the admin Server Actions and pages |
@@ -17,20 +17,19 @@ together with its inferred type.
 
 | Field | Rule |
 |---|---|
-| `firstName`, `lastName` | required, trimmed, up to 100 characters |
+| `name` | required, one field, trimmed, 1–120 characters |
 | `email` | required, trimmed and lowercased, a valid email |
-| `country` | required, ISO 3166-1 alpha-2, converted to uppercase (`br` → `BR`) |
-| `consent` | required, must be `true` |
-| `phone`, `city`, `role` | optional |
-| `organizationName`, `organizationType` | optional; the type is `church`, `ministry`, `mission_team` or `other` |
-| `message` | optional, up to 2000 characters |
+| `phone` | required, trimmed; 7–25 characters of digits, spaces and `+()-.`, with at least 7 digits |
+| `organizationName` | optional, up to 200 characters |
+| `message` | optional, up to 2000 characters; **required** on a case |
 | `sourcePage` | optional, the page the form was on |
-| `interest` | lead only, optional |
-| `subject` | case only, **required** |
+| `subject` | case only, optional, up to 200 characters |
 | `website` | the honeypot: a hidden field people never fill. The route accepts a filled one with 200 and stores nothing. |
 
-Optional text is trimmed. In every optional text field and in `organizationType`, an empty string becomes
-`undefined`, so a blank form field never counts as a value.
+There's no consent field: the forms show a privacy notice next to the button, and intake stores the submission time
+as the Person's `consentAt`. Unknown keys are dropped.
+
+Optional text is trimmed, and an empty string becomes `undefined`, so a blank form field never counts as a value.
 
 ## The admin inputs
 
@@ -38,9 +37,9 @@ Optional text is trimmed. In every optional text field and in `organizationType`
 - `ownerChangeInput`: an email, or empty to unassign, which becomes `null`.
 - `noteInput`: 1–5,000 characters.
 - `leadStatusFilter`, `caseStatusFilter`: the list filters; an unknown `?status=` means all.
-- `personEditInput`: the email is lowercased and the country uppercased to two letters; empty optional fields become
-  `null`.
-- `organizationEditInput`: name, type and country are required.
+- `personEditInput`: one required `name` (up to 120 characters); the email is lowercased and the country uppercased
+  to two letters; empty optional fields (phone included) become `null`.
+- `organizationEditInput`: name and type are required; the country is optional (two letters, or empty for `null`).
 - `opportunityEditInput`: name and stage are required; the expected start is a `YYYY-MM-DD` date or empty, and notes
   are up to 5,000 characters.
 - `convertLeadInput`: the id of the lead to convert.

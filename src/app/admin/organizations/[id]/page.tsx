@@ -75,7 +75,7 @@ export default async function OrganizationPage({ params }: { params: { id: strin
             items={people.map((person) => ({
               id: person.id,
               href: `/admin/people/${person.id}`,
-              title: `${person.firstName} ${person.lastName}`,
+              title: person.name,
               detail: person.role ? `${person.role} · ${person.email}` : person.email,
             }))}
           />
@@ -86,7 +86,7 @@ export default async function OrganizationPage({ params }: { params: { id: strin
             items={leads.map((lead) => ({
               id: lead.id,
               href: `/admin/leads/${lead.id}`,
-              title: `${lead.firstName} ${lead.lastName}`,
+              title: lead.name,
               detail: formatDateTime(lead.createdAt),
               status: lead.status,
             }))}

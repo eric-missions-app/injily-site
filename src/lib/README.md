@@ -28,6 +28,7 @@ editing this file and nothing else.
 |---|---|
 | `statusLabel(status)` | `in_progress` → `in progress`, for statuses and enum values shown to people |
 | `formatDateTime(date)` | `25 Nov 2026, 14:05 UTC`; always UTC, so every admin sees the same time |
+| `firstWord(name)` | `Ana Silva` → `Ana`, for greetings ("Thanks, Ana.") in the form confirmation and the visitor email |
 
 ### `validation/`: Zod schemas
 
@@ -44,7 +45,7 @@ There's one schema per input, and **the same schema runs in the browser and on t
 Export the schema and its inferred type together:
 
 ```ts
-export const leadInput = z.object({ firstName: z.string().trim().min(1), /* … */ });
+export const leadInput = z.object({ name: z.string().trim().min(1), /* … */ });
 export type LeadInput = z.infer<typeof leadInput>;
 ```
 

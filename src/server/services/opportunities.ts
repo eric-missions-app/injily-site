@@ -34,7 +34,7 @@ export async function listOpportunities(stage?: OpportunityStage): Promise<Oppor
 export type OpportunityDetail = {
   opportunity: typeof opportunities.$inferSelect;
   organization: { id: string; name: string } | null;
-  lead: { id: string; status: LeadStatus; firstName: string; lastName: string } | null;
+  lead: { id: string; status: LeadStatus; name: string } | null;
   activities: Activity[];
 };
 
@@ -47,8 +47,7 @@ export async function getOpportunity(id: string): Promise<OpportunityDetail | nu
       organizationName: organizations.name,
       leadId: leads.id,
       leadStatus: leads.status,
-      firstName: people.firstName,
-      lastName: people.lastName,
+      personName: people.name,
     })
     .from(opportunities)
     .leftJoin(organizations, eq(opportunities.organizationId, organizations.id))
@@ -62,8 +61,8 @@ export async function getOpportunity(id: string): Promise<OpportunityDetail | nu
     organization:
       row.organizationId && row.organizationName ? { id: row.organizationId, name: row.organizationName } : null,
     lead:
-      row.leadId && row.leadStatus && row.firstName !== null && row.lastName !== null
-        ? { id: row.leadId, status: row.leadStatus, firstName: row.firstName, lastName: row.lastName }
+      row.leadId && row.leadStatus && row.personName !== null
+        ? { id: row.leadId, status: row.leadStatus, name: row.personName }
         : null,
     activities: await listActivities('opportunity', id),
   };
@@ -152,7 +151,7 @@ export async function convertLeadToOpportunity(leadId: string, actorEmail: strin
     if (existing) return { status: 'already_converted' };
 
     const [person] = await tx
-      .select({ firstName: people.firstName, lastName: people.lastName })
+      .select({ name: people.name })
       .from(people)
       .where(eq(people.id, lead.personId));
     const [organization] = lead.organizationId
@@ -161,7 +160,7 @@ export async function convertLeadToOpportunity(leadId: string, actorEmail: strin
           .from(organizations)
           .where(eq(organizations.id, lead.organizationId))
       : [];
-    const personName = person ? `${person.firstName} ${person.lastName}` : 'the person';
+    const personName = person?.name ?? 'the person';
     const name = organization?.name ?? personName;
 
     const [opportunity] = await tx

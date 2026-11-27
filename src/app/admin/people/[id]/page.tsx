@@ -20,7 +20,7 @@ export default async function PersonPage({ params }: { params: { id: string } })
   const [detail, organizationOptions] = await Promise.all([getPerson(id.data), listOrganizationOptions()]);
   if (!detail) notFound();
   const { person, leads, cases } = detail;
-  const name = `${person.firstName} ${person.lastName}`;
+  const { name } = person;
 
   return (
     <>
@@ -42,8 +42,7 @@ export default async function PersonPage({ params }: { params: { id: string } })
             <ActionForm action={savePerson} submitLabel="Save person" noValidate>
               <input type="hidden" name="id" value={person.id} />
               <div className="grid gap-4 sm:grid-cols-2">
-                <TextField name="firstName" label="First name" defaultValue={person.firstName} autoComplete="off" />
-                <TextField name="lastName" label="Last name" defaultValue={person.lastName} autoComplete="off" />
+                <TextField name="name" label="Name" defaultValue={person.name} autoComplete="off" />
                 <TextField name="email" label="Email" type="email" defaultValue={person.email} autoComplete="off" />
                 <TextField name="phone" label="Phone" type="tel" defaultValue={person.phone} autoComplete="off" />
                 <TextField name="city" label="City" defaultValue={person.city} autoComplete="off" />
@@ -62,7 +61,7 @@ export default async function PersonPage({ params }: { params: { id: string } })
                   defaultValue={person.organizationId ?? ''}
                   options={[
                     { value: '', label: 'No organization' },
-                    ...organizationOptions.map((o) => ({ value: o.id, label: `${o.name} (${o.country})` })),
+                    ...organizationOptions.map((o) => ({ value: o.id, label: o.country ? `${o.name} (${o.country})` : o.name })),
                   ]}
                 />
               </div>

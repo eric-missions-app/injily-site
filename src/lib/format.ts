@@ -13,3 +13,8 @@ const dateTime = new Intl.DateTimeFormat('en-GB', {
 export function formatDateTime(date: Date): string {
   return `${dateTime.format(date)} UTC`;
 }
+
+/** `Ana Silva` → `Ana`: the first word of a name, for greetings. */
+export function firstWord(name: string): string {
+  return name.trim().split(/\s+/)[0] ?? '';
+}

@@ -45,7 +45,7 @@ export default async function CasesPage({ searchParams }: { searchParams: { stat
               <tr key={serviceCase.id} className="hover:bg-background-light">
                 <td className="px-4 py-3 font-semibold">
                   <Link href={`/admin/cases/${serviceCase.id}`} className={`rounded hover:text-primary ${focusRing}`}>
-                    {serviceCase.firstName} {serviceCase.lastName}
+                    {serviceCase.name}
                   </Link>
                 </td>
                 <td className="px-4 py-3">{serviceCase.organizationName ?? '—'}</td>

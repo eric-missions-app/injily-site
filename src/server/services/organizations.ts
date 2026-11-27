@@ -5,26 +5,26 @@ import { getDb, type Tx } from '@/server/db/client';
 import { leads, opportunities, organizations, people } from '@/server/db/schema';
 import { containsPattern } from './search';
 
+/** An organization named on an intake form. The forms ask for its name only, so it has no country. */
 export type OrganizationIntake = {
   name: string;
-  type?: (typeof organizations.$inferInsert)['type'];
-  city?: string;
-  /** ISO 3166-1 alpha-2 */
-  country: string;
 };
 
+/** Matches `organizations.country` to `country`, with null matching null (as the unique index treats them). */
+const sameCountry = (country: string | null) => sql`coalesce(${organizations.country}, '') = ${country ?? ''}`;
+
 /**
- * Returns the id of the organization with this name (case-insensitive) and country, creating it if there's none.
- * An existing organization is never changed. Safe under concurrency: the unique index on (lower(name), country)
- * makes a second insert a no-op, and the select then finds the row the other request created.
+ * Returns the id of the organization with this name (case-insensitive) and no country, creating it (type `other`)
+ * if there's none. An existing organization is never changed. Safe under concurrency: the unique index on
+ * (lower(name), coalesce(country, '')) makes a second insert a no-op, and the select then finds the row the other
+ * request created.
  */
 export async function matchOrCreateOrganization(tx: Tx, input: OrganizationIntake): Promise<string> {
   const name = input.name.trim();
-  const country = input.country.trim().toUpperCase();
 
   const [created] = await tx
     .insert(organizations)
-    .values({ name, type: input.type ?? 'other', city: input.city, country })
+    .values({ name, type: 'other' })
     .onConflictDoNothing()
     .returning({ id: organizations.id });
   if (created) return created.id;
@@ -32,7 +32,7 @@ export async function matchOrCreateOrganization(tx: Tx, input: OrganizationIntak
   const [existing] = await tx
     .select({ id: organizations.id })
     .from(organizations)
-    .where(and(sql`lower(${organizations.name}) = lower(${name})`, eq(organizations.country, country)))
+    .where(and(sql`lower(${organizations.name}) = lower(${name})`, sameCountry(null)))
     .limit(1);
   if (!existing) throw new Error('organization_upsert_failed');
   return existing.id;
@@ -43,7 +43,7 @@ export type OrganizationListRow = {
   name: string;
   type: OrganizationType;
   city: string | null;
-  country: string;
+  country: string | null;
   createdAt: Date;
 };
 
@@ -64,7 +64,7 @@ export async function listOrganizations(query?: string): Promise<OrganizationLis
 }
 
 /** Every organization's id, name and country, by name: the choices for a Person's organization. */
-export async function listOrganizationOptions(): Promise<{ id: string; name: string; country: string }[]> {
+export async function listOrganizationOptions(): Promise<{ id: string; name: string; country: string | null }[]> {
   return getDb()
     .select({ id: organizations.id, name: organizations.name, country: organizations.country })
     .from(organizations)
@@ -73,8 +73,8 @@ export async function listOrganizationOptions(): Promise<{ id: string; name: str
 
 export type OrganizationDetail = {
   organization: typeof organizations.$inferSelect;
-  people: { id: string; firstName: string; lastName: string; email: string; role: string | null }[];
-  leads: { id: string; status: LeadStatus; firstName: string; lastName: string; createdAt: Date }[];
+  people: { id: string; name: string; email: string; role: string | null }[];
+  leads: { id: string; status: LeadStatus; name: string; createdAt: Date }[];
   opportunities: { id: string; name: string; stage: OpportunityStage; createdAt: Date }[];
 };
 
@@ -88,20 +88,18 @@ export async function getOrganization(id: string): Promise<OrganizationDetail | 
     db
       .select({
         id: people.id,
-        firstName: people.firstName,
-        lastName: people.lastName,
+        name: people.name,
         email: people.email,
         role: people.role,
       })
       .from(people)
       .where(eq(people.organizationId, id))
-      .orderBy(asc(people.lastName), asc(people.firstName)),
+      .orderBy(asc(people.name)),
     db
       .select({
         id: leads.id,
         status: leads.status,
-        firstName: people.firstName,
-        lastName: people.lastName,
+        name: people.name,
         createdAt: leads.createdAt,
       })
       .from(leads)
@@ -124,7 +122,7 @@ export async function getOrganization(id: string): Promise<OrganizationDetail | 
 
 /**
  * Saves an Organization's details. Returns 'duplicate' if another organization has the same name
- * (case-insensitive) and country, which the unique index forbids.
+ * (case-insensitive) and country (or both no country), which the unique index forbids.
  */
 export async function updateOrganization(input: OrganizationEditInput): Promise<'ok' | 'not_found' | 'duplicate'> {
   const { id, ...fields } = input;
@@ -142,7 +140,7 @@ export async function updateOrganization(input: OrganizationEditInput): Promise<
       .where(
         and(
           sql`lower(${organizations.name}) = lower(${fields.name})`,
-          eq(organizations.country, fields.country),
+          sameCountry(fields.country),
           ne(organizations.id, id),
         ),
       );
