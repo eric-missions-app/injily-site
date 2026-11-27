@@ -11,6 +11,8 @@ is an API endpoint, and there's no router config anywhere.
 | `globals.css` | Tailwind's directives plus the **color tokens**: CSS variables under `:root` (light) and `.dark` (dark). This is the only place a color value is written. |
 | `page.tsx` | The homepage (`/`): `Header`, then `Hero`, `WhyItMatters` and `Features` inside `<main className="pt-20">`, then `Footer`. The remaining sections arrive with J-7. |
 | `api/intake/lead/route.ts`, `api/intake/case/route.ts` | The only public endpoints: `POST` a lead or a service case. See [api/README.md](api/README.md) and [api/intake/README.md](api/intake/README.md). |
+| `api/auth/[...nextauth]/route.ts` | Auth.js for admin sign-in. See [api/README.md](api/README.md). |
+| `admin/` | The signed-in CRM: Leads and Service Cases (list and detail) and their Server Actions. See [admin/README.md](admin/README.md). |
 
 ## What's coming, by ticket
 
@@ -25,8 +27,7 @@ app/
   privacy/page.tsx              J-12
   sitemap.ts, robots.ts         J-13
   not-found.tsx                 J-13
-  api/auth/[...nextauth]/route.ts  J-4
-  admin/                        J-4, J-5   signed-in CRM
+  admin/people|organizations|opportunities/  J-5   more CRM screens
 ```
 
 ## Rules for pages here

@@ -21,6 +21,13 @@ editing this file and nothing else.
 | `FOOTER_COLUMNS` | the Footer's three columns: Product, Who it's for, Company (FAQ, Contact, Privacy) |
 | `NavLink`, `NavGroup` | the types for the above |
 
+### `format.ts`: display helpers
+
+| Export | What it does |
+|---|---|
+| `statusLabel(status)` | `in_progress` → `in progress`, for statuses and enum values shown to people |
+| `formatDateTime(date)` | `25 Nov 2026, 14:05 UTC`; always UTC, so every admin sees the same time |
+
 ### `validation/`: Zod schemas
 
 There's one schema per input, and **the same schema runs in the browser and on the server**. See
@@ -31,7 +38,7 @@ There's one schema per input, and **the same schema runs in the browser and on t
 | `validation/shared.ts` | the fields `lead.ts` and `case.ts` share |
 | `validation/lead.ts` | `LeadForm` and `POST /api/intake/lead` |
 | `validation/case.ts` | `CaseForm` and `POST /api/intake/case` |
-| `validation/admin.ts` | every admin Server Action (status, owner, note, edits); coming with J-4 |
+| `validation/admin.ts` | every admin Server Action (status, owner, note) and the list filters |
 
 Export the schema and its inferred type together:
 
