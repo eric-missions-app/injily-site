@@ -13,7 +13,7 @@ is an API endpoint, and there's no router config anywhere.
 | `privacy/page.tsx` | The privacy policy (`/privacy`). Static. Read [privacy/README.md](privacy/README.md) before editing it. |
 | `api/intake/lead/route.ts`, `api/intake/case/route.ts` | The only public endpoints: `POST` a lead or a service case. See [api/README.md](api/README.md) and [api/intake/README.md](api/intake/README.md). |
 | `api/auth/[...nextauth]/route.ts` | Auth.js for admin sign-in. See [api/README.md](api/README.md). |
-| `admin/` | The signed-in CRM: Leads and Service Cases (list and detail) and their Server Actions. See [admin/README.md](admin/README.md). |
+| `admin/` | The signed-in CRM: Leads, Service Cases, People, Organizations and Opportunities (list and detail) and their Server Actions. See [admin/README.md](admin/README.md). |
 
 ## What's coming, by ticket
 
@@ -26,7 +26,6 @@ app/
   contact/page.tsx              J-11       Service Case form
   sitemap.ts, robots.ts         J-13
   not-found.tsx                 J-13
-  admin/people|organizations|opportunities/  J-5   more CRM screens
 ```
 
 ## Rules for pages here

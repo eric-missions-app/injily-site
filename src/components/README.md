@@ -25,7 +25,6 @@ forms go in `forms/` (J-11).
 |---|---|---|
 | `ProductHero`, `ProductFeatures` | J-8 | shared by the 5 product and 3 use-case pages |
 | `forms/LeadForm`, `forms/CaseForm` | J-11 | client components that POST to `/api/intake/*` |
-| `admin/*` | J-5 | more admin components for People, Organizations and Opportunities |
 
 ## Rules
 
