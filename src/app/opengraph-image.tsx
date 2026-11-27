@@ -1,3 +1,5 @@
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { ImageResponse } from 'next/og';
 import { HERO_SUBHEAD } from '@/content/hero';
 import { SITE_NAME } from '@/lib/site';
@@ -7,17 +9,22 @@ export const alt = `${SITE_NAME} — Never lose a new believer`;
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
-// An image, not a component: CSS variables don't reach the renderer, so the palette from globals.css (:root) is
-// baked in, the same way public/ assets bake theirs in. primary-darker, primary, on-primary-darker, and a light
-// primary tint for the subhead.
-const colors = {
-  background: 'rgb(49, 46, 129)',
-  mark: 'rgb(79, 70, 229)',
-  text: 'rgb(255, 255, 255)',
-  muted: 'rgb(199, 210, 254)',
-};
+// CSS variables don't reach the image renderer, so the tokens are read out of globals.css (:root, the light palette)
+// at build time. No color value is written here.
+async function loadPalette() {
+  const css = await readFile(join(process.cwd(), 'src/app/globals.css'), 'utf8');
+  const root = css.match(/:root\s*\{([^}]*)\}/)?.[1] ?? '';
 
-export default function OpengraphImage() {
+  return (token: string, opacity = 1) => {
+    const channels = root.match(new RegExp(`--color-${token}:\\s*(\\d+) (\\d+) (\\d+);`));
+    if (!channels) throw new Error(`globals.css :root has no --color-${token}`);
+    return `rgba(${channels.slice(1).join(', ')}, ${opacity})`;
+  };
+}
+
+export default async function OpengraphImage() {
+  const color = await loadPalette();
+
   return new ImageResponse(
     (
       <div
@@ -28,8 +35,8 @@ export default function OpengraphImage() {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: 80,
-          background: colors.background,
-          color: colors.text,
+          background: color('primary-darker'),
+          color: color('on-primary-darker'),
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', fontSize: 56, fontWeight: 700 }}>
@@ -39,7 +46,8 @@ export default function OpengraphImage() {
               height: 64,
               marginRight: 24,
               borderRadius: 16,
-              background: colors.mark,
+              background: color('primary'),
+              color: color('on-primary'),
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -54,7 +62,15 @@ export default function OpengraphImage() {
           <div style={{ fontSize: 80, fontWeight: 800, lineHeight: 1.1, letterSpacing: -2 }}>
             Never lose a new believer.
           </div>
-          <div style={{ marginTop: 32, maxWidth: 1000, fontSize: 34, lineHeight: 1.4, color: colors.muted }}>
+          <div
+            style={{
+              marginTop: 32,
+              maxWidth: 1000,
+              fontSize: 34,
+              lineHeight: 1.4,
+              color: color('on-primary-darker', 0.8),
+            }}
+          >
             {HERO_SUBHEAD}
           </div>
         </div>

@@ -19,7 +19,7 @@ is an API endpoint, and there's no router config anywhere.
 | `api/intake/lead/route.ts`, `api/intake/case/route.ts` | The only public endpoints: `POST` a lead or a service case. See [api/README.md](api/README.md) and [api/intake/README.md](api/intake/README.md). |
 | `api/auth/[...nextauth]/route.ts` | Auth.js for admin sign-in. See [api/README.md](api/README.md). |
 | `admin/` | The signed-in CRM: Leads, Service Cases, People, Organizations and Opportunities (list and detail) and their Server Actions. See [admin/README.md](admin/README.md). |
-| `opengraph-image.tsx` | The social card (`/opengraph-image`, 1200×630 PNG), rendered once at build time with `next/og`. Next adds it as og:image and twitter:image on every page. Its colors are baked in from `globals.css`, because CSS variables don't reach the image renderer. |
+| `opengraph-image.tsx` | The social card (`/opengraph-image`, 1200×630 PNG), rendered once at build time with `next/og`. Next adds it as og:image and twitter:image on every page. CSS variables don't reach the image renderer, so it reads the color tokens it uses from the `:root` block of `globals.css` at build time (the build fails if one is missing). Change colors there, not here. |
 | `sitemap.ts` | `/sitemap.xml`: every marketing page (home, the `PRODUCT_NAV` and `USE_CASES_NAV` links, `/faq`, `/get-started`, `/contact`, `/privacy`) as absolute `SITE_URL` URLs. Nothing under `/admin` or `/api`. Add a new marketing page here. |
 | `robots.ts` | `/robots.txt`: allows everything except `/admin` and `/api`, and names the sitemap. |
 | `not-found.tsx` | The 404 page for any unknown URL: `Header`, "Page not found" with a "Back to home" button, `Footer`. Not indexed. |
