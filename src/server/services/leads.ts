@@ -5,16 +5,18 @@ import type { LeadInput } from '@/lib/validation/lead';
 import { getDb } from '@/server/db/client';
 import { activities, leads, opportunities, organizations, people } from '@/server/db/schema';
 import { listActivities, ownerChangeBody, type Activity } from './activities';
+import { sendIntakeEmails } from './intakeEmails';
 import { upsertContact } from './people';
 
 export type CreatedLead = { leadId: string; personId: string; organizationId: string | undefined };
 
 /**
  * Intake for the "Get early access" form. In one transaction: upserts the person and organization, creates the
- * lead (status `new`) and writes its first activity. `input` must already be parsed with `leadInput`.
+ * lead (status `new`) and writes its first activity. After it commits, emails the team and the visitor (a failure
+ * there is logged, never thrown). `input` must already be parsed with `leadInput`.
  */
 export async function createLead(input: LeadInput): Promise<CreatedLead> {
-  return getDb().transaction(async (tx) => {
+  const created = await getDb().transaction(async (tx) => {
     const { personId, organizationId } = await upsertContact(tx, input, new Date());
 
     const [lead] = await tx
@@ -38,6 +40,9 @@ export async function createLead(input: LeadInput): Promise<CreatedLead> {
 
     return { leadId: lead.id, personId, organizationId };
   });
+
+  await sendIntakeEmails({ kind: 'lead', id: created.leadId, input });
+  return created;
 }
 
 export type LeadListRow = {
