@@ -18,8 +18,7 @@ export default function GetStartedPage() {
           <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
             <h1 className="text-4xl font-extrabold tracking-tight text-text sm:text-5xl">Get early access</h1>
             <p className="mt-4 text-lg text-muted">
-              Tell us a little about you and your ministry. A person from our team will read it and get in touch to
-              hear what you need and help you get started with injily.
+              Leave your details and someone from our team will be in touch shortly.
             </p>
           </div>
         </section>

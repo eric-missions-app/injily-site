@@ -9,20 +9,23 @@ that validate with the Zod schema from `@/lib/validation` (the same one the rout
 | File | Client? | What it does |
 |---|---|---|
 | `LeadForm.tsx` | yes | The "Get early access" form on `/get-started`. Validates with `leadInput`, POSTs to `/api/intake/lead`, and sends `sourcePage` (the page the visitor came from). |
-| `CaseForm.tsx` | yes | The contact form on `/contact`. Validates with `caseInput`, POSTs to `/api/intake/case`, and adds the required Subject field. |
-| `IntakeForm.tsx` | yes | What both forms share: the fields, the honeypot, validation, the submit flow and the confirmation. |
+| `CaseForm.tsx` | yes | The contact form on `/contact`. Validates with `caseInput`, POSTs to `/api/intake/case`, and requires the message ("Your question"). |
+| `IntakeForm.tsx` | yes | What both forms share: the fields, the honeypot, the privacy notice, validation, the submit flow and the confirmation. `organizationLabel` turns on the optional organization field; `message` sets the message field's label and whether it's required. |
 | `SourcePageTracker.tsx` | yes | Renders nothing. Rendered once in the root layout, it records each path the visitor visits. |
 | `sourcePage.ts` | n/a | `rememberPath()` (called by the tracker) and `referringPath()`: the previous path on this site, else a same-origin `document.referrer`, else `undefined`. `next/link` navigation never updates `document.referrer`, which is why the tracker exists. |
 
 ## How a submit works
 
-1. **Fields:** name\*, email\*, phone, organization, organization type, role, city, country\*
-   (a select of `COUNTRIES` from `@/content/countries`, sending the ISO code), Subject\* (case only), message, and the
-   consent checkbox\* linking to `/privacy`. Every field has a visible label; required ones show `*`. The privacy link
-   is a plain `<a>` that opens in a new tab, so the form keeps its values and `sourcePage` is unaffected.
-   **In transition:** the schemas now take only name, email, phone (required), organization, message (required on a
-   case), subject and `sourcePage`, and drop the other keys; phone and message errors come back from the schema even
-   though the fields aren't marked required yet. The next change trims the form to match.
+1. **Fields,** in one column, each with a visible label; required ones show `*`:
+   - Get early access: Name\*, Email\*, Phone\*, "Church or ministry" (`organizationName`) and "Anything you'd like
+     us to know" (`message`).
+   - Contact: Name\*, Email\*, Phone\* and "Your question"\* (`message`).
+
+   Inputs use `type="email"` / `type="tel"` and `autoComplete` (`name`, `email`, `tel`, `organization`) so browsers
+   offer autofill. There's no consent checkbox: under the button, small muted text reads "By sending this you agree
+   to our privacy policy", linking to `/privacy`. The link is a plain `<a>` that opens in a new tab, so the form keeps
+   its values and `sourcePage` is unaffected. The case schema still accepts an optional `subject`, but the form
+   doesn't ask for one.
 2. **Honeypot:** a `website` input, off-screen, `aria-hidden`, `tabIndex={-1}` and `autoComplete="off"`, so people
    and keyboards never reach it. The server accepts a filled one and stores nothing.
 3. **Validation:** the form has `noValidate`; the Zod schema runs first, and its messages show under each field

@@ -11,6 +11,8 @@ export default function LeadForm() {
       schema={leadInput}
       endpoint="/api/intake/lead"
       submitLabel="Get early access"
+      organizationLabel="Church or ministry"
+      message={{ label: "Anything you'd like us to know" }}
       extraValues={() => ({ sourcePage: referringPath() })}
     />
   );
