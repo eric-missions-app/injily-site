@@ -18,12 +18,13 @@ forms go in `forms/` (J-11).
 | `Audiences.tsx` | no | Homepage "Who it's for": three cards (Churches & pastors, Evangelists & missioners, Mission & outreach teams), one line each. The whole card links to its `/use-cases/<slug>` page. |
 | `FaqPreview.tsx` | yes | Homepage FAQ: an accordion of the first four entries from `@/content/faq` (one open at a time; real buttons with `aria-expanded`, so Tab and Enter work) and a "See all questions" link to `/faq`. Answers are in the server HTML, hidden until opened. |
 | `CTA.tsx` | no | The dark `bg-primary-darker` card every marketing page ends with (not `/get-started`, `/contact` or `/privacy`): "Ready to strengthen your church's follow-up?", "Make disciples, not just decisions." and one `CTA_LABEL` button to `CTA_HREF`. No props: put `<CTA />` after the page's last section. |
+| `ProductHero.tsx` | no | The opening section of a product or use-case page (`bg-background`): a breadcrumb (`parent` link, then `name` as the current page, e.g. "Product / Convert tracking"), the `title` (the page's `h1`), the `subtitle`, and a `visual` beside them from `lg`. The visual is any static, token-styled markup the page passes in; it's read as one image described by `visualLabel`. No entrance motion: it's above the fold. |
+| `ProductFeatures.tsx` | no | A product or use-case page's grid of 3–6 `points` (Material Symbols icon, title, body) under a `title` and optional `subtitle`, on `bg-background-light`. Four points lay out two by two, other counts three across from `lg`. |
 
 ## Coming next
 
 | Component | Ticket | Notes |
 |---|---|---|
-| `ProductHero`, `ProductFeatures` | J-8 | shared by the 5 product and 3 use-case pages |
 | `forms/LeadForm`, `forms/CaseForm` | J-11 | client components that POST to `/api/intake/*` |
 | `admin/*` | J-5 | more admin components for People, Organizations and Opportunities |
 
