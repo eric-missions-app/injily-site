@@ -9,7 +9,7 @@ is an API endpoint, and there's no router config anywhere.
 |---|---|
 | `layout.tsx` | The root HTML shell for every page. It loads Manrope through `next/font/google` (self-hosted, exposed as `--font-manrope`), links the Material Symbols icon font, and sets site-wide `metadata` (title template `%s \| injily`, description). |
 | `globals.css` | Tailwind's directives plus the **color tokens**: CSS variables under `:root` (light) and `.dark` (dark). This is the only place a color value is written. |
-| `page.tsx` | The homepage (`/`). For now it's just `Header`, an empty `<main className="pt-20">` and `Footer`. Sections arrive with J-6 and J-7. |
+| `page.tsx` | The homepage (`/`): `Header`, then `Hero`, `WhyItMatters` and `Features` inside `<main className="pt-20">`, then `Footer`. The remaining sections arrive with J-7. |
 | `api/auth/[...nextauth]/route.ts` | Auth.js for admin sign-in. See [api/README.md](api/README.md). |
 | `admin/` | The signed-in CRM: Leads and Service Cases (list and detail) and their Server Actions. See [admin/README.md](admin/README.md). |
 
@@ -17,7 +17,7 @@ is an API endpoint, and there's no router config anywhere.
 
 ```
 app/
-  page.tsx                      J-6, J-7   homepage sections
+  page.tsx                      J-7        remaining homepage sections
   product/<slug>/page.tsx       J-8, J-9   convert-tracking, follow-up, mentoring, missions, insights
   use-cases/<slug>/page.tsx     J-10       churches, evangelists, mission-teams
   faq/page.tsx                  J-10
