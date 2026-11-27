@@ -8,6 +8,9 @@ screenshots live here.
 | File | Used by |
 |---|---|
 | `hero-illustration.svg` | `src/components/Hero.tsx`: a stylised injily dashboard (converts with their follow-up status, an upcoming meeting, a mentor pairing). It's drawn in the light palette from `globals.css`. |
+| `favicon.svg` | The site icon (an "i" on the primary color), set in `metadata.icons` in `src/app/layout.tsx`. |
+
+The social card isn't here: it's rendered at build time from `src/app/opengraph-image.tsx`.
 
 ## Rules
 

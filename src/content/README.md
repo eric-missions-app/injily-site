@@ -8,6 +8,7 @@ words live here so they're written once.
 | File | What it holds |
 |---|---|
 | `faq.ts` | `FAQ`, every FAQ entry (`{ question, answer }`) in display order, and the `FaqEntry` type. The homepage `FaqPreview` shows the first four; `/faq` shows them all. |
+| `hero.ts` | `HERO_SUBHEAD`, the homepage hero's subhead. `Hero` shows it, and `app/layout.tsx` and `app/opengraph-image.tsx` use it as the site-wide description and the social card's text, so they never drift apart. |
 | `countries.ts` | `COUNTRIES`, every ISO 3166-1 alpha-2 country as `{ code, name }` sorted by English name, and the `Country` type. The intake forms' country select lists them and sends the code. |
 
 ## Rules
