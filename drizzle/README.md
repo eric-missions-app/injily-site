@@ -19,13 +19,23 @@ npm run db:migrate               # applies pending migrations to DATABASE_URL (r
 ```
 
 `db:generate` doesn't connect to a database. `db:migrate` needs `DATABASE_URL`, and stops with a clear error
-without it.
+without it. It's for local and Neon-branch databases.
+
+## Production
+
+Production is migrated on every production deploy: Vercel's `npm run vercel-build` runs
+[`scripts/migrate-on-deploy.mjs`](../scripts/migrate-on-deploy.mjs) before `next build`. It applies pending
+migrations with drizzle's migrator, over `DATABASE_URL_UNPOOLED` (or `DATABASE_URL` if that's unset), in one
+transaction. If one fails, the build fails naming the file, nothing from that deploy is applied, and the previous
+deployment stays live. Preview deploys skip it, since they share production's database. So a merged migration
+reaches production with the code that needs it; don't apply it there by hand.
 
 ## Rules
 
 - A schema change and its generated migration go in the same commit and PR.
 - **Never edit or delete a migration once it has been applied anywhere** (a teammate's database, a preview, or
   production). Fix forward with a new migration.
-- Neon branches are cheap: test a migration on a fresh branch before production.
+- Neon branches are cheap: test a migration on a fresh branch before merging (merging to `main` deploys it to
+  production).
 - The snapshot files are large and machine-written. Joseph's reviewer leaves `drizzle/meta/*` out of its PR size
   count.
