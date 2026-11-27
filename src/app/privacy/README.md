@@ -11,9 +11,9 @@ The privacy policy, at `/privacy`. The Footer's Privacy link points here, and so
 ## Rules for editing
 
 - **When the copy changes, update `LAST_UPDATED`** (both `iso` and `label`).
-- **Keep it in step with the form fields** in `src/lib/validation` (arriving with J-2; until then, the intake section
-  of [ARCHITECTURE.md](../../../ARCHITECTURE.md)). Adding, removing or changing a field means checking "What we
-  collect".
+- **Keep it in step with the form fields** in `src/lib/validation/lead.ts` and `case.ts` (arriving with J-2; until
+  then, the intake section of [ARCHITECTURE.md](../../../ARCHITECTURE.md)). Adding, removing or changing a field
+  means checking "What we collect".
 - **Keep it in step with the services and third parties the site uses.** Today it names Resend (email), Neon
   (database), Vercel (hosting and request logs) and Google Fonts (the icon font linked in `src/app/layout.tsx`).
   Adding or removing one means checking "Who can see it".

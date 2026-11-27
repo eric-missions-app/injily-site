@@ -62,6 +62,7 @@ src/
     services/                  # business logic: leads.ts, cases.ts, people.ts, …
     email/                     # Resend client and email templates
     auth.ts                    # Auth.js config and allow-list
+    auth.config.ts             # the Edge-safe part middleware uses (JWT sessions, no adapter)
   middleware.ts                # protects /admin/*
 drizzle/                       # generated migrations (committed)
 public/                        # favicon, logo, OG image, screenshots
@@ -113,6 +114,7 @@ Keep it basic. Every table has `id` (uuid), `createdAt` and `updatedAt`.
 | `opportunities` | organizationId, leadId, name, stage (`discovery`, `onboarding`, `active`, `lost`), expectedStart, notes |
 | `activities` | recordType, recordId, kind (`note`, `status_change`, `email`), body, authorEmail |
 | `submissions` | kind (`lead`, `case`), ipHash, createdAt (for rate limiting) |
+| `verification_tokens` | identifier (email), token (hashed), expires: admin magic links, deleted once used |
 
 - Intake deduplicates: a Person is matched by email, an Organization by name and country (case-insensitive).
   An existing Person's blank fields get filled in, and filled ones are never overwritten by a form.
