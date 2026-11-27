@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { HERO_SUBHEAD } from '@/content/hero';
 import { CTA_HREF, CTA_LABEL } from '@/lib/site';
 
 const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary';
@@ -16,10 +17,7 @@ export default function Hero() {
           <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-text sm:text-5xl lg:text-6xl">
             Never lose a <span className="text-primary">new believer</span> again.
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-muted">
-            injily helps churches and evangelists track every convert, assign mentors, and complete follow-ups — so
-            the harvest is never wasted.
-          </p>
+          <p className="mt-6 max-w-xl text-lg text-muted">{HERO_SUBHEAD}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
               href={CTA_HREF}
