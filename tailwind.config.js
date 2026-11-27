@@ -11,6 +11,7 @@ module.exports = {
         'primary-hover': token('primary-hover'),
         'on-primary': token('on-primary'),
         'primary-darker': token('primary-darker'),
+        'on-primary-darker': token('on-primary-darker'),
         background: token('background'),
         'background-light': token('background-light'),
         surface: token('surface'),
