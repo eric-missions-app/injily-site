@@ -9,8 +9,9 @@ One page per product feature, at `/product/<slug>`. The Product dropdown, the Fo
 |---|---|
 | [`convert-tracking/`](convert-tracking/README.md) | `/product/convert-tracking` |
 | [`follow-up/`](follow-up/README.md) | `/product/follow-up` (the homepage's Task Management and Calendar & Planner cards both link here) |
-
-Mentoring, Missions and Insights come next (J-9).
+| [`mentoring/`](mentoring/README.md) | `/product/mentoring` |
+| [`missions/`](missions/README.md) | `/product/missions` |
+| [`insights/`](insights/README.md) | `/product/insights` |
 
 ## Rules for a product page
 
